@@ -6,6 +6,8 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.VolatileImage;
 
+import static java.lang.Math.cos;
+
 public class Game implements Runnable{
 
     Window window;
@@ -14,17 +16,25 @@ public class Game implements Runnable{
     KL kl = KL.getKeyListener();
     private final float moveSpeed = 50f;
     float playerX, playerY, playerDX, playerDY, playerAngle;
-    int mapXSize = 8, mapYSize = 8, mapS = 32;
+    int mapXSize = 16, mapYSize = 16, mapTileSize = 32, mapArraySize = 16;
 
     int[][] map = {
-            {1, 1, 1, 1, 1, 1, 1, 1},
-            {1, 0, 1, 0, 0, 0, 0, 1},
-            {1, 0, 1, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 1, 1},
-            {1, 0, 0, 0, 0, 0, 1, 1},
-            {1, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 1},
-            {1, 1, 1, 1, 1, 1, 1, 1},
+            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+            {1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+            {1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+            {1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1},
+            {1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1},
+            {1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
+            {1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
+            {1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
+            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+            {1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
+            {1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
+            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+            {1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1},
+            {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1},
+            {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1},
+            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
 
     };
 
@@ -42,7 +52,7 @@ public class Game implements Runnable{
 
         playerX = 300;
         playerY = 300;
-        playerDX = (float) Math.cos(playerAngle) * 5;
+        playerDX = (float) cos(playerAngle) * 5;
         playerDY = (float) Math.sin(playerAngle) * 5;
 
     }
@@ -89,12 +99,12 @@ public class Game implements Runnable{
                     g.setColor(Color.black);
                 }
 
-                xo = x*mapS; yo = y*mapS;
+                xo = x* mapTileSize; yo = y* mapTileSize;
 
-                g.fillRect(xo,yo,mapS,mapS);
+                g.fillRect(xo,yo, mapTileSize, mapTileSize);
 
                 g.setColor(Color.GRAY);
-                g.drawRect(xo,yo,mapS,mapS);
+                g.drawRect(xo,yo, mapTileSize, mapTileSize);
 
 
             }
@@ -213,101 +223,110 @@ public class Game implements Runnable{
 
     public void drawRays2DV2(Graphics g){
 
-        float mpx = playerX + 4;
-        float mpy = playerY + 4;
-        int rayNumber=0, totalRays = 360, mapX=0,mapY=0,depth=0;
-        float rayX = 0, rayY = 0, rayAngle = 0, xOffset = 0, yOffset = 0;
-        rayAngle = playerAngle - RAD * totalRays/2;
+        int rayNumber=0, totalRays = 70, mapX=0,mapY=0,depth=0,maxDepth = mapArraySize;
+        float rayX = playerX, rayY = playerY, rayAngle = 0, xOffset = 0, yOffset = 0, disT;
+        rayAngle = playerAngle - (RAD * totalRays/2);
+
 
         if (rayAngle <    0){ rayAngle+=2*PI; }
         if (rayAngle > 2*PI){ rayAngle-=2*PI; }
 
 
-        rayAngle = playerAngle;
+
 
         for (rayNumber = 0; rayNumber < totalRays; rayNumber++){
-//-------------------HORIZONTAL RAYCAST-------------------------
-
             //Horizontal line check;
             depth = 0;
             float distanceH= 100000,horX = 0, horY = 0;
             float angleTangent = (float) (-1/Math.tan(rayAngle));
 
 
-            //if ray is angle up
-            if (rayAngle > PI){
-                rayY = (float) ((int) playerY>>6) * (64) -1 ;  rayX = ((playerY - rayY) * angleTangent) + playerX;
-                yOffset =-64; xOffset = -yOffset * angleTangent;
-            }
             //if ray is angle down
+            if (rayAngle > PI){
+                rayY = (float) (((int) playerY/ mapTileSize) * (mapTileSize) -1) ;  rayX = ((playerY - rayY) * angleTangent) + playerX;
+                yOffset =-mapTileSize; xOffset = -yOffset * angleTangent;
+            }
+            //if ray is angle up
             if (rayAngle < PI){
                 //rounding the float to an aprox (dividing by 64 and then multiplying by 64)
-                rayY = (float) ((int) playerY>>6) * (64) +64 ; rayX = ((playerY - rayY) * angleTangent) + playerX;
-                yOffset = 64;  xOffset = -yOffset * angleTangent;
+                rayY = (float) (((int) playerY/ mapTileSize) * (mapTileSize) + mapTileSize); rayX = ((playerY - rayY) * angleTangent) + playerX;
+                yOffset = mapTileSize;  xOffset = -yOffset * angleTangent;
             }
 
             if (rayAngle == 0 || rayAngle == PI){
-                rayX = playerX; rayY = playerY; depth = 8;
+                rayX = playerX; rayY = playerY; depth = maxDepth;
             }
 
-            while (depth < 8){
-                mapX = (int) (rayX) / 64; mapY = (int) (rayY) / 64;
-                mapX = clamp(mapX, 0, 7);  mapY = clamp(mapY, 0, 7);
+            while (depth < maxDepth){
+                mapX = (int) (rayX) / mapTileSize; mapY = (int) (rayY) / mapTileSize;
+                mapX = clamp(mapX, 0, mapXSize-1);  mapY = clamp(mapY, 0, mapYSize-1);
                 if (map[mapY][mapX] == 1){
-                    horX = rayX;
-                    horY = rayY;
+                    horX = rayX;horY = rayY;
                     distanceH = getRayLength(playerX,playerY,horX,horY);
-                    depth = 8;
+                    depth = maxDepth;
                 }else {
                     rayX += xOffset; rayY += yOffset;
                     depth += 1;
                 }
             }
-//endregion
-//-------------------VERTICAL RAYCAST-------------------------
+
+            //-------------------Vertical RAYCAST-------------------------
+
 
             depth = 0;
-            float distanceV= 100000,verX = 0, verY = 0;
+            float distanceV= Float.MAX_VALUE,verX = 0, verY = 0;
             float negAngleTangent = (float) (-Math.tan(rayAngle));
 
             //if ray is angle left
             if (rayAngle > PI/2 && rayAngle < 3*PI/2){
-                rayX = (float)(((int)playerX>>6) * (64) -1) ;  rayY = ((playerX - rayX) * negAngleTangent) + playerY;
-                xOffset =-64; yOffset =-xOffset * negAngleTangent;
+                rayX = (float)(((int)playerX/mapTileSize) * (mapTileSize) -1) ;  rayY = ((playerX - rayX) * negAngleTangent) + playerY;
+                xOffset =-mapTileSize; yOffset =-xOffset * negAngleTangent;
             }
             //if ray is angle right
             if (rayAngle < PI/2 || rayAngle > 3*PI/2){
-                //rounding the float to an aprox (dividing by 64 and then multiplying by 64)
-                rayX = (float)(((int)playerX>>6) * (64) +64) ; rayY = ((playerX - rayX) * negAngleTangent) + playerY;
-                xOffset = 64;  yOffset = -xOffset * negAngleTangent;
+                rayX = (float)(((int)playerX/mapTileSize) * (mapTileSize) +mapTileSize) ; rayY = ((playerX - rayX) * negAngleTangent) + playerY;
+                xOffset = mapTileSize;  yOffset = -xOffset * negAngleTangent;
             }
             //looking straight up or down
             if (rayAngle == PI/2 || rayAngle == 3 * PI/2){
-                rayX = playerX; rayY = playerY; depth = 8;
+
+                rayX = playerX; rayY = playerY; depth = maxDepth;
             }
 
-            while (depth < 8){
-                mapX = (int) (rayX)>>6; mapY = (int) (rayY)>>6;
-                mapX = clamp(mapX, 0, 7);  mapY = clamp(mapY, 0, 7);
+            while (depth < maxDepth){
+                mapX = (int) (rayX)/mapTileSize; mapY = (int) (rayY)/mapTileSize;
+                mapX = clamp(mapX, 0, mapXSize-1);  mapY = clamp(mapY, 0, mapYSize-1);
                 if (map[mapY][mapX] == 1){
                     verX = rayX;
                     verY = rayY;
                     distanceV = getRayLength(playerX,playerY,verX,verY);
-                    depth = 8;
+                    depth = maxDepth;
                 }else {
                     rayX += xOffset; rayY += yOffset;
                     depth += 1;
                 }
             }
-            if ( distanceH<distanceV){
-                rayX = horX;
-                rayY = horY;
-            }
-            if ( distanceH>distanceV){
-                rayX = verX;
-                rayY = verY;
-            }
+            if ( distanceH<distanceV){rayX = horX; rayY = horY; disT=distanceH; }
+            else                     {rayX = verX; rayY = verY; disT=distanceV; }
+
             g.setColor(Color.green);g.drawLine((int) playerX, (int)playerY, (int)rayX, (int)rayY);
+
+//            ----DRAW 3D WALLS----
+
+//            Fixes fish eye
+            float ca = playerAngle - rayAngle;
+            if (ca <    0){ ca+=2*PI; }
+            if (ca > 2*PI){ ca-=2*PI; }
+            disT = (float)(disT * cos(ca));
+//            ends fix for fish eye
+            float lineH = (mapTileSize * 2 * 320) / disT;
+            if (lineH>320){
+                lineH = 320;
+            }
+            float lineOffset = 160-lineH/2;
+
+            g.fillRect(rayNumber*8 + 530,(int)lineOffset + 100,8,(int)lineH);
+
             rayAngle += RAD;
             if (rayAngle <    0){ rayAngle+=2*PI; }
             if (rayAngle > 2*PI){ rayAngle-=2*PI; }
@@ -322,13 +341,11 @@ public class Game implements Runnable{
     }
 
     public void drawPlayer(Graphics g){
-        float mpx = playerX + 4;
-        float mpy = playerY + 4;
 
         g.setColor(Color.yellow);
         g.fillRect((int) playerX, (int) playerY, (int) 8, (int)  8);
         g.setColor(Color.red);
-        g.drawLine((int) mpx,(int)mpy,(int) (mpx + playerDX * 5  ) ,(int) (mpy + playerDY * 5));
+        g.drawLine((int) playerX,(int)playerY,(int) (playerX + playerDX * 5  ) ,(int) (playerY + playerDY * 5));
 
     }
 
@@ -337,8 +354,8 @@ public class Game implements Runnable{
         g.fillRect(0,0,window.getWidth(),window.getHeight());
 
         drawMap2D(g);
-        drawPlayer(g);
         drawRays2DV2(g);
+        drawPlayer(g);
 
         g.setColor(Color.green);
         g.drawString(displayInfo,30,90);
@@ -358,7 +375,7 @@ public class Game implements Runnable{
             if (playerAngle <0){
                 playerAngle +=2*PI;
             }
-            playerDX = (float) Math.cos(playerAngle) * 5;
+            playerDX = (float) cos(playerAngle) * 5;
             playerDY = (float) Math.sin(playerAngle) * 5;
 
         }
@@ -367,7 +384,7 @@ public class Game implements Runnable{
             if (playerAngle >2*PI){
                 playerAngle -=2*PI;
             }
-            playerDX = (float) Math.cos(playerAngle) * 5;
+            playerDX = (float) cos(playerAngle) * 5;
             playerDY = (float) Math.sin(playerAngle) * 5;
         }
     }
