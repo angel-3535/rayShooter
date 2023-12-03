@@ -1,24 +1,24 @@
 package util;
 
 public class Vector2D{
-    private double x;
-    private double y;
+    private float x;
+    private float y;
 
 
-    public static Vector2D NorthWest = new Vector2D(-Math.sqrt(2)/2.0,-Math.sqrt(2)/2.0);
+    public static Vector2D NorthWest = new Vector2D((float) (-Math.sqrt(2)/2.0), (float) (-Math.sqrt(2)/2.0));
     public static Vector2D north = new Vector2D(0,-1);
-    public static Vector2D northEast = new Vector2D(Math.sqrt(2)/2.0,-Math.sqrt(2)/2.0);
+    public static Vector2D northEast = new Vector2D((float) (Math.sqrt(2)/2.0), (float) (-Math.sqrt(2)/2.0));
     public static Vector2D East = new Vector2D(1,0);
-    public static Vector2D SouthEast = new Vector2D(Math.sqrt(2)/2.0,Math.sqrt(2)/2.0);
+    public static Vector2D SouthEast = new Vector2D((float) (Math.sqrt(2)/2.0), (float) ( Math.sqrt(2)/2.0));
     public static Vector2D South = new Vector2D(0,1);
-    public static Vector2D SouthWest = new Vector2D(-Math.sqrt(2)/2.0,Math.sqrt(2)/2.0);
+    public static Vector2D SouthWest = new Vector2D((float) (-Math.sqrt(2)/2.0), (float) (Math.sqrt(2)/2.0));
     public static Vector2D West = new Vector2D(-1,0);
 
     public Vector2D(){
         x = 0;
         y = 0;
     }
-    public Vector2D(double x, double y){
+    public Vector2D(float x, float y){
         this.x = x;
         this.y = y;
     }
@@ -27,12 +27,14 @@ public class Vector2D{
         this(position.getX(), position.getY());
     }
 
-    public double getMagnitude(){
-        return Math.sqrt(x * x + y * y);
+
+
+    public float getMagnitude(){
+        return (float) Math.sqrt(x * x + y * y);
     }
 
     public void normalize(){
-        double movementVectorMagnitude = Math.sqrt(x * x + y * y);
+        float movementVectorMagnitude = (float) Math.sqrt(x * x + y * y);
 
         x = movementVectorMagnitude != 0 ? x / movementVectorMagnitude: x;
         y = movementVectorMagnitude != 0 ? y / movementVectorMagnitude: y;
@@ -55,7 +57,7 @@ public class Vector2D{
         y -= v.y;
     }
 
-    public Vector2D multiply(double s){
+    public Vector2D multiply(float s){
         x *= s;
         y *= s;
         return this;
@@ -76,24 +78,24 @@ public class Vector2D{
         return ret;
     }
 
-    public double getX() {
+    public float getX() {
         return x;
     }
 
-    public void setX(double x) {
+    public void setX(float x) {
         this.x = x;
     }
 
-    public double getY() {
+    public float getY() {
         return y;
     }
 
-    public void setY(double y) {
+    public void setY(float y) {
         this.y = y;
     }
 
-    public void rotate(double angle, double rotationX, double rotationY){
-        double RadiantsAngle = Math.toRadians(angle);
+    public void rotate(float angle, float rotationX, float rotationY){
+        float RadiantsAngle = (float) Math.toRadians(angle);
 
         //place vector at origin
         setX(this.x - rotationX);
@@ -102,11 +104,11 @@ public class Vector2D{
         //rotate
         //x` = xcos(θ)−ysin(θ)
         //y` = xsin(θ)+ycos(θ)
-        double Ox = getX();
-        double Oy = getY();
+        float Ox = getX();
+        float Oy = getY();
 
-        setX( Ox * Math.cos(RadiantsAngle) - Oy * Math.sin(RadiantsAngle));
-        setY( Ox * Math.sin(RadiantsAngle) + Oy * Math.cos(RadiantsAngle));
+        setX((float) (Ox * Math.cos(RadiantsAngle) - Oy * Math.sin(RadiantsAngle)));
+        setY((float) (Ox * Math.sin(RadiantsAngle) + Oy * Math.cos(RadiantsAngle)));
 
         //setVectorBackToLocation
 
@@ -114,7 +116,7 @@ public class Vector2D{
         setY(this.y + rotationY);
     }
 
-    public void rotate(double angle, Vector2D rotationPoint){
+    public void rotate(float angle, Vector2D rotationPoint){
         rotate(angle, rotationPoint.x, rotationPoint.y);
     }
 }

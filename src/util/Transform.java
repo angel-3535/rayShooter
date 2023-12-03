@@ -5,6 +5,7 @@ package util;
 public class Transform {
     private Vector2D position = new Vector2D();
     private Vector2D size = new Vector2D();
+    private Vector2D foward = new Vector2D();
     private Vector2D centerPoint = new Vector2D();
 
 
