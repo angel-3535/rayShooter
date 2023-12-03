@@ -1,4 +1,5 @@
 import util.io.KL;
+import util.io.ML;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,6 +16,7 @@ public class Window extends JFrame {
         this.setVisible(true);
         this.setTitle("rayshooter");
         addKeyListener(KL.getKeyListener());
+        addMouseListener(ML.getMouseListener());
         System.setProperty("sun.java2d.opengl", "true");
 
         ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
