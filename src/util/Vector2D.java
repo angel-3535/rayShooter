@@ -1,5 +1,7 @@
 package util;
 
+import static java.lang.Math.cos;
+
 public class Vector2D{
     private float x;
     private float y;
@@ -119,4 +121,6 @@ public class Vector2D{
     public void rotate(float angle, Vector2D rotationPoint){
         rotate(angle, rotationPoint.x, rotationPoint.y);
     }
+
+
 }

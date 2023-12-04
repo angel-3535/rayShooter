@@ -1,13 +1,19 @@
+import util.Rect;
 import util.Time;
+import util.Transform;
 import util.io.KL;
 import util.io.ML;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
+import java.io.File;
 
 import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 
 public class Game implements Runnable{
 
@@ -18,9 +24,13 @@ public class Game implements Runnable{
     ML ml = ML.getMouseListener();
     private final float moveSpeed = 30f;
     float playerX, playerY, playerDX, playerDY, playerAngle;
+    Transform player = new Transform();
     int mapXSize = 32, mapYSize = 32, mapTileSize = 16, mapArraySize = 32;
     private final float PI = (float) Math.PI, RAD = 0.0174533F;
     private float rotationSpeed = (float) Math.toRadians(180);
+    private ImageIcon gunSprite;
+    private boolean moving = false;
+    float weaponX = 0 ,weaponY =  0;
 
     //    int[][] map = {
     //            {1, 1, 1, 1, 1, 1, 1, 1},
@@ -58,19 +68,19 @@ public class Game implements Runnable{
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 4, 4, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 4, 4, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 2, 2, 2, 2, 1},
@@ -103,8 +113,24 @@ public class Game implements Runnable{
         playerX = 300;
         playerY = 300;
         playerDX = (float) cos(playerAngle) * 5;
-        playerDY = (float) Math.sin(playerAngle) * 5;
+        playerDY = (float) sin(playerAngle) * 5;
+//        try{
+//            ImageIcon sprite = ImageIO.read(new File("src/assets/w0_a.png"));
+//            for (Rect rect:rects) {
+//                frames.add(spriteSheet.getSubimage(
+//                        rect.x,
+//                        rect.y,
+//                        rect.w,
+//                        rect.h));
+//            }
+//        }catch(Exception e){
+//            e.printStackTrace();
+//        }
 
+        gunSprite = new ImageIcon("src/assets/handgun.png");
+
+        weaponY =  512 - 256;
+        weaponX = 1024 - 256;
     }
 
     private void nonVolatileImageRender() {
@@ -266,6 +292,7 @@ public class Game implements Runnable{
             if (map[mapY][mapX] == 1) {wallColor = Color.green;}
             if (map[mapY][mapX] == 2) {wallColor = Color.red;}
             if (map[mapY][mapX] == 3) {wallColor = Color.blue;}
+            if (map[mapY][mapX] == 4) {wallColor = Color.orange;}
             if (darker) {wallColor = wallColor.darker();}
 
 
@@ -319,11 +346,27 @@ public class Game implements Runnable{
         drawMap2D(g);
         drawRays2D(g);
         drawPlayer(g);
+        drawWeapon(g);
 
         g.setColor(Color.green);
         g.drawString(displayInfo,30,90);
     }
 
+    public void drawWeapon(Graphics g){
+        if (moving){
+            weaponX = (float) (1024 - 256 - (cos(Time.getTime()) * 15));
+            weaponY = (float) (512 -  256 - (sin(Time.getTime()) * 5));
+        }
+        g.drawImage(
+                gunSprite.getImage(),
+                (int) weaponX,
+                (int) weaponY,
+                256,
+                256,
+                null
+        );
+
+    }
     public void inputs(double dt){
         if (kl.isKeyDown(KeyEvent.VK_W)){
             playerX += (float) (moveSpeed * playerDX * dt);
@@ -339,7 +382,16 @@ public class Game implements Runnable{
                 playerAngle +=2*PI;
             }
             playerDX = (float) cos(playerAngle) * 5;
-            playerDY = (float) Math.sin(playerAngle) * 5;
+            playerDY = (float) sin(playerAngle) * 5;
+
+        }
+        if (kl.isKeyDown(KeyEvent.VK_LEFT)){
+            playerAngle -= (float) (rotationSpeed * dt);
+            if (playerAngle <0){
+                playerAngle +=2*PI;
+            }
+            playerDX = (float) cos(playerAngle) * 5;
+            playerDY = (float) sin(playerAngle) * 5;
 
         }
         if (kl.isKeyDown(KeyEvent.VK_D)){
@@ -348,7 +400,22 @@ public class Game implements Runnable{
                 playerAngle -=2*PI;
             }
             playerDX = (float) cos(playerAngle) * 5;
-            playerDY = (float) Math.sin(playerAngle) * 5;
+            playerDY = (float) sin(playerAngle) * 5;
+        }
+        if (kl.isKeyDown(KeyEvent.VK_RIGHT)){
+            playerAngle += (float) (rotationSpeed * dt);
+            if (playerAngle >2*PI){
+                playerAngle -=2*PI;
+            }
+            playerDX = (float) cos(playerAngle) * 5;
+            playerDY = (float) sin(playerAngle) * 5;
+        }
+
+        if (kl.isKeyDown(KeyEvent.VK_W) || kl.isKeyDown(KeyEvent.VK_S)){
+            moving = true;
+        }
+        else{
+            moving = false;
         }
     }
 
@@ -362,8 +429,6 @@ public class Game implements Runnable{
         volatileImageRender();
 //        nonVolatileImageRender();
     }
-
-
 
     @Override
     public void run() {

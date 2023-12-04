@@ -1,6 +1,7 @@
 package util;
 
 
+import static java.lang.Math.cos;
 
 public class Transform {
     private Vector2D position = new Vector2D();
@@ -8,6 +9,9 @@ public class Transform {
     private Vector2D foward = new Vector2D();
     private Vector2D centerPoint = new Vector2D();
 
+    private float angleDegrees = 0;
+
+    private float angleRadians = 0;
 
     public Transform(){
         this(0,0,0,0);
@@ -18,7 +22,7 @@ public class Transform {
         size = s;
     }
 
-    public Transform(double x, double y, double w, double h){
+    public Transform(float x, float y, float w, float h){
         position.setX(x);
         position.setY(y);
         size.setX(w);
@@ -26,27 +30,27 @@ public class Transform {
     }
 
 
-    public double getX(){
+    public float getX(){
         return position.getX();
     }
 
-    public double getY(){
+    public float getY(){
         return position.getY();
     }
 
-    public double getWidth(){
+    public float getWidth(){
         return size.getX();
     }
 
-    public double getHeight(){
+    public float getHeight(){
         return size.getY();
     }
 
-    public double getCenterX(){
+    public float getCenterX(){
         return centerPoint.getX();
     }
 
-    public double getCenterY(){
+    public float getCenterY(){
         return centerPoint.getY();
     }
 
@@ -59,7 +63,7 @@ public class Transform {
         calculateCenterPoint();
     }
 
-    public void setPosition(double x, double y) {
+    public void setPosition(float x, float y) {
         this.setPosition(new Vector2D(x,y));
     }
 
@@ -68,19 +72,19 @@ public class Transform {
         this.moveYBy(moveBy.getY());
     }
 
-    public void setX(double x){
+    public void setX(float x){
         this.setPosition(new Vector2D(x,this.getY()));
     }
 
-    public void moveXBy(double x){
+    public void moveXBy(float x){
         this.setX(getX() + x);
     }
 
-    public void setY(double y){
+    public void setY(float y){
         this.setPosition(new Vector2D(this.getX(),y));
     }
 
-    public void moveYBy(double y){
+    public void moveYBy(float y){
         this.setY(getY() + y);
     }
 
@@ -93,21 +97,22 @@ public class Transform {
         calculateCenterPoint();
     }
 
-    public void setSize(double w, double h) {
+    public void setSize(float w, float h) {
         setSize(new Vector2D(w,h));
     }
 
-    public void setWidth(double w){
+    public void setWidth(float w){
         this.setSize(new Vector2D(w,this.getHeight()));
     }
 
-    public void setHeight(double h){
+    public void setHeight(float h){
         this.setSize(new Vector2D(this.getWidth(),h));
     }
 
     public Vector2D getCenterPoint() {
         return centerPoint;
     }
+
 
 //    public Collider getAsCollider(){
 //        return new Collider(
@@ -117,11 +122,54 @@ public class Transform {
 //                (int) this.getHeight()
 //        );
 //    }
-
     private void calculateCenterPoint() {
         this.centerPoint.setX(this.getX() + this.getWidth()/2);
         this.centerPoint.setY(this.getY() + this.getHeight()/2);
     }
+
+    public Vector2D getFoward() {
+        return foward;
+    }
+
+    private void setFoward() {
+        this.foward = new Vector2D((float) cos(angleRadians), (float) Math.sin(angleRadians));
+        this.foward.normalize();
+    }
+
+    public float getAngleDegrees() {
+        return angleDegrees;
+    }
+
+    public void setAngleDegrees(float angleDegrees) {
+        this.angleDegrees = angleDegrees;
+        this.angleRadians = (float) Math.toRadians(angleDegrees);
+    }
+
+    public float getAngleRadians() {
+        return angleRadians;
+
+    }
+
+    public void setAngleRadians(float angleRadians) {
+        this.angleRadians = angleRadians;
+        this.angleDegrees = (float) Math.toDegrees(angleRadians);
+
+    }
+
+
+//    public float getAngleRadians(){
+//
+//
+//
+
+//    }
+//    public Vector2D getFoward(){
+////        playerDX = (float) cos(playerAngle) * 5;
+////       playerDY = (float) Math.sin(playerAngle) * 5;
+//        Vector2D v = new Vector2D();
+//
+
+//    }
 
 
 
