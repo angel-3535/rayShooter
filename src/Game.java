@@ -1,27 +1,22 @@
-import assets.Rooms;
+import gfx.Renderable;
+import gfx.Window;
 import util.*;
 import util.io.KL;
 import util.io.ML;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.awt.image.VolatileImage;
-import java.io.File;
-import java.security.Key;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
-public class Game implements Runnable{
+public class Game implements Runnable, Renderable {
 
-    Window window;
+    gfx.Window window;
     int frameRate = 0;
     String displayInfo = "";
     private final float PI = (float) Math.PI, RAD = 0.0174533F;
-    int mapXSize = 32, mapYSize = 32, mapTileSize = 16, mapArraySize = 32;
     private float rotationSpeed = 180f;
     private ImageIcon gunSprite;
     private boolean moving = false;
@@ -31,8 +26,9 @@ public class Game implements Runnable{
     Player player = new Player();
     final KL kl = KL.getKeyListener();
     final ML ml = ML.getMouseListener();
-    final float moveSpeed = 30f;
-    final int maxRenderLineHeight = 320;
+    final float moveSpeed = 120f;
+    final int maxRenderLineHeight = 520;
+    final int totalRays = 120;
 
     //    int[][] map = {
     //            {1, 1, 1, 1, 1, 1, 1, 1},
@@ -70,7 +66,7 @@ public class Game implements Runnable{
 
 
     public Game(){
-        window = new Window();
+        window = Window.getWindow();
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         window.setSize(1024,512);
         window.setVisible(true);
@@ -79,6 +75,7 @@ public class Game implements Runnable{
 
 
         player.transform.setPosition(300f,300f);
+        player.transform.rotateAngleRadiansBy(10* RAD);
 
         gunSprite = new ImageIcon("src/assets/handgun.png");
 
@@ -97,12 +94,12 @@ public class Game implements Runnable{
                     g.setColor(Color.black);
                 }
 
-                xo = x* mapTileSize; yo = y* mapTileSize;
+                xo = x* map.getTileSize(); yo = y* map.getTileSize();
 
-                g.fillRect(xo,yo, mapTileSize, mapTileSize);
+                g.fillRect(xo,yo, map.getTileSize(), map.getTileSize());
 
                 g.setColor(Color.GRAY);
-                g.drawRect(xo,yo, mapTileSize, mapTileSize);
+                g.drawRect(xo,yo, map.getTileSize(), map.getTileSize());
 
 
             }
@@ -114,46 +111,39 @@ public class Game implements Runnable{
     }
 
 
+    public void castRays(Graphics g){
 
-    public void drawRays2D(Graphics g){
-
-        int     rayNumber=0,
-                totalRays = 120;
+        int rayNumber=0;
 
         float rayAngle = player.transform.getAngleRadians() - (RAD * totalRays/4);
-        Color wallColor = Color.green;
+
+        Ray r;
 
         if (rayAngle <    0){ rayAngle+=2*PI; }
         if (rayAngle > 2*PI){ rayAngle-=2*PI; }
 
-
-
-
         for (rayNumber = 0; rayNumber < totalRays; rayNumber++) {
 
-            Ray r = new Ray(
-                    (int) player.transform.getX(),
-                    (int)player.transform.getY(),
-                    (int)player.transform.getAngleRadians()
+            r = new Ray(
+                    player.transform.getX(),
+                    player.transform.getY(),
+                    rayAngle
             );
-
             r.trace(map);
+            r.draw(g);
+            g.setColor(r.wallColor);
 
-            g.drawLine(
-                    (int) player.transform.getX(),
-                    (int)player.transform.getY(),
-                    (int)r.hitX,
-                    (int)r.hitY
-            );
 
 //            ----DRAW 3D WALLS----
+
+
 //            Fixes fish eye
             float ca = player.transform.getAngleRadians() - r.rayAngle;
             if (ca <    0){ ca+=2*PI; }
             if (ca > 2*PI){ ca-=2*PI; }
             r.disT = (float)(r.disT * cos(ca));
 //            ends fix for fish eye
-            float lineH = (mapTileSize * 2 * maxRenderLineHeight) / r.disT;
+            float lineH = (map.getTileSize() * 2 * maxRenderLineHeight) / r.disT;
             if (lineH> maxRenderLineHeight){
                 lineH = maxRenderLineHeight;
             }
@@ -170,8 +160,7 @@ public class Game implements Runnable{
 
 
     }
-
-    public void drawPlayer(Graphics g){
+    public void drawPlayer2D(Graphics g){
 
         g.setColor(Color.yellow);
         g.fillRect((int) player.transform.getX(), (int) player.transform.getY(), (int) 8, (int)  8);
@@ -184,20 +173,19 @@ public class Game implements Runnable{
         );
 
     }
-
     public void draw(Graphics g){
         g.setColor(Color.BLACK);
         g.fillRect(0,0,window.getWidth(),window.getHeight());
 
-        drawMap2D(g);
-        drawRays2D(g);
-        drawPlayer(g);
+//        drawMap2D(g);
+        map.draw(g);
+        castRays(g);
+        drawPlayer2D(g);
         drawWeapon(g);
 
         g.setColor(Color.green);
         g.drawString(displayInfo,30,90);
     }
-
     public void drawWeapon(Graphics g){
         if (moving){
             weaponX = (float) (1024 - 256 - (cos(Time.getTime()) * 15));
@@ -257,7 +245,6 @@ public class Game implements Runnable{
 
         frameRate = (int) (1/dt);
         displayInfo = String.format("%d FPS (%.3f)", frameRate,dt);
-
         window.render(this);
     }
 

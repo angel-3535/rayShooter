@@ -1,10 +1,13 @@
 package util;
 
 import assets.Rooms;
+import gfx.Renderable;
+
+import java.awt.*;
 
 import static util.RMath.clamp;
 
-public class Map {
+public class Map implements Renderable {
     public int[][] layout;
 
     float TileSize;
@@ -30,10 +33,10 @@ public class Map {
     }
 
     public int getMapX(float x){
-        return (int) ((int) x/ TileSize);
+        return (int) (x/ TileSize);
     }
     public int getMapY(float y){
-        return (int) ((int) y/ TileSize);
+        return (int) (y/ TileSize);
     }
 
     public int getTileContent(int x, int y){
@@ -45,4 +48,27 @@ public class Map {
     public int getMapSize(){
         return layout.length;
     }
+
+    public void draw(Graphics g){
+        int x,y,xo,yo;
+        for (y = 0; y < this.getMapSize(); y++){
+            for (x = 0; x < this.getMapSize(); x++){
+
+                if (this.getTileContent(x,y)!=0){
+                    g.setColor(Color.white);
+                }else{
+                    g.setColor(Color.black);
+                }
+
+                xo = x* this.getTileSize(); yo = y* this.getTileSize();
+
+                g.fillRect(xo,yo, this.getTileSize(), this.getTileSize());
+
+                g.setColor(Color.GRAY);
+                g.drawRect(xo,yo, this.getTileSize(), this.getTileSize());
+
+            }
+        }
+    }
+
 }

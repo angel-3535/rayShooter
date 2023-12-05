@@ -1,3 +1,5 @@
+package gfx;
+
 import util.io.KL;
 import util.io.ML;
 
@@ -10,13 +12,16 @@ public class Window extends JFrame {
     GraphicsEnvironment ge;
     GraphicsConfiguration gc;
     private boolean volatileR;
+    public static Window window = null;
 
-    public Window(){
+
+    private Window(){
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setSize(1024,512);
         this.setResizable(false);
         this.setVisible(true);
         this.setTitle("rayshooter");
+//        this.setUndecorated(true);
         addKeyListener(KL.getKeyListener());
         addMouseListener(ML.getMouseListener());
         volatileR = true;
@@ -26,46 +31,51 @@ public class Window extends JFrame {
         gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
     }
 
-    public void render(Game game){
-        if (volatileR){
-            volatileImageRender(game);
+    public static Window getWindow(){
+        if (Window.window == null){
+            Window.window = new Window();
+        }
+        return window;
+    }
+
+    public static void render(Renderable r){
+        if (window.volatileR){
+            volatileImageRender(r);
         }else{
-            nonVolatileImageRender(game);
+            nonVolatileImageRender(r);
         }
     }
 
-    private void volatileImageRender(Game game) {
-        VolatileImage vImg =  this.gc.createCompatibleVolatileImage(this.getWidth(),this.getHeight());
+    private static void volatileImageRender(Renderable r) {
+        VolatileImage vImg =  window.gc.createCompatibleVolatileImage(window.getWidth(),window.getHeight());
 
         do {
-            if (vImg.validate(this.gc) ==
+            if (vImg.validate(window.gc) ==
                     VolatileImage.IMAGE_INCOMPATIBLE)
             {
                 // old vImg doesn't work with new GraphicsConfig; re-create it
-                vImg = this.gc.createCompatibleVolatileImage(this.getWidth(),this.getHeight());
+                vImg = window.gc.createCompatibleVolatileImage(window.getWidth(),window.getHeight());
             }
             Graphics2D g = vImg.createGraphics();
 
 
-            game.draw(g);
+            r.draw(g);
 
             g.dispose();
         } while (vImg.contentsLost());
 
-        this.getGraphics().drawImage(vImg, 0, 0, null);
+        window.getGraphics().drawImage(vImg, 0, 0, null);
 
     }
 
-    private void nonVolatileImageRender(Game game) {
-        Image Img = this.createImage(this.getWidth(),this.getHeight());
+    private static void nonVolatileImageRender(Renderable r) {
+        Image Img = window.createImage(window.getWidth(),window.getHeight());
         Graphics g = Img.getGraphics();
 
-        game.draw(g);
+        r.draw(g);
 
-        this.getGraphics().drawImage(Img, 0, 0, null);
+        window.getGraphics().drawImage(Img, 0, 0, null);
     }
-
-
 
 
 }
