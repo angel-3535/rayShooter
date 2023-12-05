@@ -2,6 +2,7 @@ package util;
 
 
 import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 
 public class Transform {
     private Vector2D position = new Vector2D();
@@ -18,8 +19,7 @@ public class Transform {
     }
 
     public Transform(Vector2D p, Vector2D s){
-        position = p;
-        size = s;
+        this(p.getX(),p.getY(),s.getX(),s.getY());
     }
 
     public Transform(float x, float y, float w, float h){
@@ -27,6 +27,7 @@ public class Transform {
         position.setY(y);
         size.setX(w);
         size.setY(h);
+        this.setAngleRadians(0);
     }
 
 
@@ -132,7 +133,7 @@ public class Transform {
     }
 
     private void setFoward() {
-        this.foward = new Vector2D((float) cos(angleRadians), (float) Math.sin(angleRadians));
+        this.foward = new Vector2D((float) cos(angleRadians), (float) sin(angleRadians));
         this.foward.normalize();
     }
 
@@ -142,7 +143,17 @@ public class Transform {
 
     public void setAngleDegrees(float angleDegrees) {
         this.angleDegrees = angleDegrees;
+
+        if (this.angleDegrees < 0){
+            this.angleDegrees += 360;
+        }
+        if (this.angleDegrees > 360){
+            this.angleDegrees -= 360;
+        }
+
         this.angleRadians = (float) Math.toRadians(angleDegrees);
+        calculateFoward();
+
     }
 
     public float getAngleRadians() {
@@ -152,24 +163,37 @@ public class Transform {
 
     public void setAngleRadians(float angleRadians) {
         this.angleRadians = angleRadians;
+
+        if (this.angleRadians < 0){
+            this.angleRadians += 2 * Math.PI;
+        }
+        if (this.angleRadians > 2 * Math.PI){
+            this.angleRadians -= 2 * Math.PI;
+        }
+
         this.angleDegrees = (float) Math.toDegrees(angleRadians);
 
+        calculateFoward();
+    }
+
+    public void rotateAngleRadiansBy(float angle){
+        this.setAngleRadians(getAngleRadians() + angle);
+    }
+    public void rotateAngleDegreesBy(float angle){
+        this.setAngleDegrees(getAngleDegrees() + angle);
     }
 
 
-//    public float getAngleRadians(){
-//
-//
-//
 
-//    }
-//    public Vector2D getFoward(){
-////        playerDX = (float) cos(playerAngle) * 5;
-////       playerDY = (float) Math.sin(playerAngle) * 5;
-//        Vector2D v = new Vector2D();
-//
-
-//    }
+    private void calculateFoward(){
+//        playerDX = (float) cos(playerAngle) * 5;
+//       playerDY = (float) Math.sin(playerAngle) * 5;
+        Vector2D v = new Vector2D();
+        v.setX((float) cos(getAngleRadians()));
+        v.setY((float) sin(getAngleRadians()));
+        v.normalize();
+        foward.setX(v.getX()); foward.setY(v.getY());
+    }
 
 
 
