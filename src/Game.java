@@ -7,6 +7,7 @@ import util.io.ML;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -29,6 +30,7 @@ public class Game implements Runnable, Renderable {
     final float moveSpeed = 120f;
     final int maxRenderLineHeight = 520;
     final int totalRays = 120;
+    private int newWallVal = 1;
 
     //    int[][] map = {
     //            {1, 1, 1, 1, 1, 1, 1, 1},
@@ -177,8 +179,7 @@ public class Game implements Runnable, Renderable {
         g.setColor(Color.BLACK);
         g.fillRect(0,0,window.getWidth(),window.getHeight());
 
-//        drawMap2D(g);
-        map.draw(g);
+        drawMap2D(g);
         castRays(g);
         drawPlayer2D(g);
         drawWeapon(g);
@@ -230,6 +231,30 @@ public class Game implements Runnable, Renderable {
         if (kl.isKeyDown(KeyEvent.VK_UP)){
             lineYOffset += 500 * dt;
         }
+        if (kl.isKeyDown(KeyEvent.VK_1)){
+            newWallVal = 1;
+        }
+        if (kl.isKeyDown(KeyEvent.VK_2)){
+            newWallVal = 2;
+        }
+        if (kl.isKeyDown(KeyEvent.VK_3)){
+            newWallVal = 3;
+        }
+        if (kl.isKeyDown(KeyEvent.VK_4)){
+            newWallVal = 4;
+        }
+        if (kl.isKeyDown(KeyEvent.VK_5)){
+            newWallVal = 5;
+        }
+        if (kl.isKeyDown(KeyEvent.VK_6)){
+            newWallVal = 6;
+        }
+        if (kl.isKeyDown(KeyEvent.VK_7)){
+            newWallVal = 7;
+        }
+        if (kl.isKeyDown(KeyEvent.VK_8)){
+            newWallVal = 8;
+        }
 
         if (kl.isKeyDown(KeyEvent.VK_W) || kl.isKeyDown(KeyEvent.VK_S)){
             moving = true;
@@ -237,7 +262,31 @@ public class Game implements Runnable, Renderable {
         else{
             moving = false;
         }
+
+        mouseInputs(dt);
     }
+    public void mouseInputs(double dt){
+        if (ml.isPressed(MouseEvent.BUTTON1)){
+            Vector2D v = map.getMapPos((float)ml.getX(),(float) ml.getY());
+
+            System.out.println("X pos: " + ml.getX() + ", Y pos: " + ml.getY());
+
+            if( v.getX() <  map.getMapSize() && v.getY() <  map.getMapSize()) {
+                map.setTileContent((int)v.getX(),(int)v.getY(), newWallVal);
+            }
+        }
+
+        if (ml.isPressed(MouseEvent.BUTTON3)){
+            Vector2D v = map.getMapPos((float)ml.getX(),(float) ml.getY());
+
+            System.out.println("X pos: " + ml.getX() + ", Y pos: " + ml.getY());
+
+            if( v.getX() <  map.getMapSize() && v.getY() <  map.getMapSize()) {
+                map.setTileContent((int)v.getX(),(int)v.getY(), 0);
+            }
+        }
+    }
+
 
     public void update(double dt){
 

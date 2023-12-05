@@ -7,8 +7,7 @@ import static java.lang.Math.PI;
 
 public class Ray implements Renderable {
     public static final float RAD = 0.0174533F;
-    public float originX;
-    public float originY;
+    public Vector2D origin = new Vector2D();
     public float rayAngle;
     public float hitX;
     public float hitY;
@@ -24,8 +23,8 @@ public class Ray implements Renderable {
     public int hitValue = 0;
 
     public Ray(float startingX, float startingY, float Angle){
-        this.originX = startingX;
-        this.originY = startingY;
+        this.origin.setX(startingX);
+        this.origin.setY(startingY);
 
         this.rayX = startingX;
         this.rayY = startingY;
@@ -39,7 +38,7 @@ public class Ray implements Renderable {
 
 
     public void trace(Map map){
-        maxDepth = 32;
+        maxDepth = (int) (map.getMapSize() * 1.5);
         horizontalTrace(map);
         verticalTrace(map);
         mapX = map.getMapX(hitX);
@@ -57,20 +56,20 @@ public class Ray implements Renderable {
 
         //if ray is angle down
         if (rayAngle > PI){
-            rayY = (float) (((int) originY / map.getTileSize()) * (map.getTileSize()) -0.0001) ;
-            rayX = ((originY - rayY) * angleTangent) + originX;
+            rayY = (float) (((int) origin.getY() / map.getTileSize()) * (map.getTileSize()) -0.0001) ;
+            rayX = ((origin.getY() - rayY) * angleTangent) + origin.getX();
             yOffset =-map.getTileSize(); xOffset = -yOffset * angleTangent;
         }
         //if ray is angle up
         if (rayAngle < PI){
-            rayY = (float) (((int) originY / map.getTileSize()) * (map.getTileSize()) + map.getTileSize());
-            rayX = ((originY - rayY) * angleTangent) + originX;
+            rayY = (float) (((int) origin.getY() / map.getTileSize()) * (map.getTileSize()) + map.getTileSize());
+            rayX = ((origin.getY() - rayY) * angleTangent) + origin.getX();
             yOffset = map.getTileSize();  xOffset = -yOffset * angleTangent;
         }
 
         if (rayAngle == 0 || rayAngle == PI){
-            rayX = originX;
-            rayY = originY;
+            rayX = origin.getX();
+            rayY = origin.getY();
             depth = maxDepth;
         }
 
@@ -81,7 +80,7 @@ public class Ray implements Renderable {
             if (map.getTileContent(mapX, mapY)!= 0){
 
                 horX = rayX;horY = rayY;
-                distanceH = getRayLength(originX,originY,horX,horY);
+                distanceH = getRayLength(origin.getX(),origin.getY(),horX,horY);
                 depth = maxDepth;
 
             }else {
@@ -106,21 +105,21 @@ public class Ray implements Renderable {
 
         //if ray is angle left
         if (rayAngle > PI/2 && rayAngle < 3*PI/2){
-            rayX = (float)(((int)originX/map.getTileSize()) * (map.getTileSize()) - 0.0001) ;
-            rayY = ((originX - rayX) * negAngleTangent) + originY;
+            rayX = (float)(((int)origin.getX()/map.getTileSize()) * (map.getTileSize()) - 0.0001) ;
+            rayY = ((origin.getX() - rayX) * negAngleTangent) + origin.getY();
             xOffset =-map.getTileSize(); yOffset =-xOffset * negAngleTangent;
         }
         //if ray is angle right
         if (rayAngle < PI/2 || rayAngle > 3*PI/2){
-            rayX = (float)(((int)originX/map.getTileSize()) * (map.getTileSize()) + map.getTileSize()) ;
-            rayY = ((originX - rayX) * negAngleTangent) + originY;
+            rayX = (float)(((int)origin.getX()/map.getTileSize()) * (map.getTileSize()) + map.getTileSize()) ;
+            rayY = ((origin.getX() - rayX) * negAngleTangent) + origin.getY();
             xOffset = map.getTileSize();  yOffset = -xOffset * negAngleTangent;
         }
         //looking straight up or down
         if (rayAngle == PI/2 || rayAngle == 3 * PI/2){
 
-            rayX = originX;
-            rayY = originY;
+            rayX = origin.getX();
+            rayY = origin.getY();
             depth = maxDepth;
         }
 
@@ -130,7 +129,7 @@ public class Ray implements Renderable {
             if (map.getTileContent(mapX,mapY) != 0){
                 verX = rayX;
                 verY = rayY;
-                distanceV = getRayLength(originX,originY,verX,verY);
+                distanceV = getRayLength(origin.getX(),origin.getY(),verX,verY);
                 depth = maxDepth;
 
             }else {
@@ -157,7 +156,19 @@ public class Ray implements Renderable {
                 wallColor = Color.blue;
                 break;
             case 4:
-                wallColor = Color.blue;
+                wallColor = Color.orange;
+                break;
+            case 5:
+                wallColor = Color.pink;
+                break;
+            case 6:
+                wallColor = Color.yellow;
+                break;
+            case 7:
+                wallColor = Color.darkGray;
+                break;
+            case 8:
+                wallColor = Color.white;
                 break;
             default:
 
@@ -169,7 +180,7 @@ public class Ray implements Renderable {
 
         g.setColor(this.wallColor);
 
-        g.drawLine((int) originX, (int)originY, (int)hitX, (int)hitY);
+        g.drawLine((int) origin.getX(), (int) origin.getY(), (int)hitX, (int)hitY);
 
     }
     public void drawIn3D(){

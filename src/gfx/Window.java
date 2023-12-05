@@ -21,7 +21,6 @@ public class Window extends JFrame {
         this.setResizable(false);
         this.setVisible(true);
         this.setTitle("rayshooter");
-//        this.setUndecorated(true);
         addKeyListener(KL.getKeyListener());
         addMouseListener(ML.getMouseListener());
         volatileR = true;

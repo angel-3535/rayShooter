@@ -17,12 +17,13 @@ public class Map implements Renderable {
     }
 
     public Map(){
-        layout = Rooms.room1;
-        TileSize = 16;
+        layout = Rooms.room2;
+        TileSize = 8;
     }
 
     public Vector2D getMapPos(Vector2D v){
-        return  this.getMapPos(v.getX(),v.getY());
+        Vector2D r = this.getMapPos(v.getX(),v.getY());
+        return  r;
     }
     public Vector2D getMapPos(float x, float y){
         Vector2D v = new Vector2D();
@@ -43,6 +44,11 @@ public class Map implements Renderable {
         x = clamp(x, 0, getMapSize() -1 );
         y = clamp(y, 0, getMapSize() -1 );
         return layout[y][x];
+    }
+    public void setTileContent(int x, int y, int value){
+        x = clamp(x, 0, getMapSize() -1 );
+        y = clamp(y, 0, getMapSize() -1 );
+        layout[y][x] = value;
     }
 
     public int getMapSize(){
