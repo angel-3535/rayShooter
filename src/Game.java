@@ -31,38 +31,8 @@ public class Game implements Runnable, Renderable {
     final int maxRenderLineHeight = 520;
     final int totalRays = 120;
     private int newWallVal = 1;
-
-    //    int[][] map = {
-    //            {1, 1, 1, 1, 1, 1, 1, 1},
-    //            {1, 0, 1, 0, 0, 0, 0, 1},
-    //            {1, 0, 1, 0, 0, 0, 0, 1},
-    //            {1, 0, 0, 0, 0, 0, 0, 1},
-    //            {1, 0, 0, 0, 0, 0, 0, 1},
-    //            {1, 0, 0, 0, 0, 0, 0, 1},
-    //            {1, 0, 1, 0, 0, 0, 0, 1},
-    //            {1, 1, 1, 1, 1, 1, 1, 1},
-    //
-    //
-    //    };
-    //int[][] map = {
-    //            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-    //            {1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    //            {1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    //            {1, 0, 1, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0, 0, 0, 1},
-    //            {1, 0, 3, 3, 3, 3, 3, 3, 0, 3, 0, 0, 0, 0, 0, 1},
-    //            {1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 1},
-    //            {1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 1},
-    //            {1, 0, 2, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 0, 0, 1},
-    //            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    //            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    //            {1, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    //            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-    //            {1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1},
-    //            {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1},
-    //            {1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1},
-    //            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-    //
-    //    };
+    private Color f_Color = new Color(40, 23, 23,255);
+    private Color c_Color = new Color(30, 55, 58,255);
 
     Map map = new Map();
 
@@ -150,9 +120,9 @@ public class Game implements Runnable, Renderable {
                 lineH = maxRenderLineHeight;
             }
             float lineOffset = 160-lineH/2 + lineYOffset;
-            int lines= (int) (512.0/totalRays);
+            int lines= (int) (512.0/totalRays) + 1;
 
-            g.fillRect(rayNumber*lines + 530,(int)lineOffset + 100,lines,(int)lineH);
+            g.fillRect(rayNumber*lines + 512,(int)lineOffset + 100,lines,(int)lineH);
 
             rayAngle += RAD/2;
             if (rayAngle <    0){ rayAngle+=2*PI; }
@@ -176,8 +146,11 @@ public class Game implements Runnable, Renderable {
 
     }
     public void draw(Graphics g){
-        g.setColor(Color.BLACK);
-        g.fillRect(0,0,window.getWidth(),window.getHeight());
+
+        g.setColor(c_Color);
+        g.fillRect(0,0,window.getWidth(),window.getHeight()/2);
+        g.setColor(f_Color);
+        g.fillRect(0,window.getHeight()/2,window.getWidth(),window.getHeight()/2);
 
         drawMap2D(g);
         castRays(g);
@@ -206,12 +179,30 @@ public class Game implements Runnable, Renderable {
         if (kl.isKeyDown(KeyEvent.VK_W)){
             Vector2D v = new Vector2D(player.transform.getFoward());
             v.multiply((float) (moveSpeed * dt));
-            player.transform.movePositionBy(v);
+
+            Vector2D newPos = new Vector2D(player.transform.getX() + v.getX(), player.transform.getY() + v.getY());
+
+
+            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(player.transform.getY())) == 0){
+                player.transform.moveXBy(v.getX());
+            }
+            if (map.getTileContent(map.getMapX(player.transform.getX()), map.getMapY(newPos.getY())) == 0){
+                player.transform.moveYBy(v.getY());
+            }
         }
         if (kl.isKeyDown(KeyEvent.VK_S)){
             Vector2D v = new Vector2D(player.transform.getFoward());
-            v.multiply((float) (-moveSpeed * dt));
-            player.transform.movePositionBy(v);
+            v.multiply((float) - (moveSpeed * dt));
+
+            Vector2D newPos = new Vector2D(player.transform.getX() + v.getX(), player.transform.getY() + v.getY());
+
+
+            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(player.transform.getY())) == 0){
+                player.transform.moveXBy(v.getX());
+            }
+            if (map.getTileContent(map.getMapX(player.transform.getX()), map.getMapY(newPos.getY())) == 0){
+                player.transform.moveYBy(v.getY());
+            }
         }
         if (kl.isKeyDown(KeyEvent.VK_A)){
             player.transform.rotateAngleDegreesBy((float) -(rotationSpeed * dt));
@@ -224,12 +215,6 @@ public class Game implements Runnable, Renderable {
         }
         if (kl.isKeyDown(KeyEvent.VK_RIGHT)){
             player.transform.rotateAngleDegreesBy((float) (rotationSpeed * dt));
-        }
-        if (kl.isKeyDown(KeyEvent.VK_DOWN)){
-            lineYOffset -= 500 * dt;
-        }
-        if (kl.isKeyDown(KeyEvent.VK_UP)){
-            lineYOffset += 500 * dt;
         }
         if (kl.isKeyDown(KeyEvent.VK_1)){
             newWallVal = 1;
@@ -286,7 +271,6 @@ public class Game implements Runnable, Renderable {
             }
         }
     }
-
 
     public void update(double dt){
 

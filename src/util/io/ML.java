@@ -41,8 +41,8 @@ public class ML extends MouseAdapter implements MouseMotionListener {
      */
     @Override
     public void mousePressed(MouseEvent e){
-        buttonPressedDictionary.put(e.getButton(),true);
         mouseMoved(e);
+        buttonPressedDictionary.put(e.getButton(),true);
 
     }
 
