@@ -94,9 +94,37 @@ public class Game implements Runnable, Renderable {
             }
         }
         if (kl.isKeyDown(KeyEvent.VK_A)){
+            Vector2D v = new Vector2D(player.transform.getFowardNormal());
+            v.multiply((float) (-moveSpeed * dt));
+
+            Vector2D newPos = new Vector2D(player.transform.getX() + v.getX(), player.transform.getY() + v.getY());
+
+
+            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(player.transform.getY())) == 0){
+                player.transform.moveXBy(v.getX());
+            }
+            if (map.getTileContent(map.getMapX(player.transform.getX()), map.getMapY(newPos.getY())) == 0){
+                player.transform.moveYBy(v.getY());
+            }
+        }
+        if (kl.isKeyDown(KeyEvent.VK_LEFT)){
             player.transform.rotateAngleDegreesBy((float) -(rotationSpeed * dt));
         }
         if (kl.isKeyDown(KeyEvent.VK_D)){
+            Vector2D v = new Vector2D(player.transform.getFowardNormal());
+            v.multiply((float) (moveSpeed * dt));
+
+            Vector2D newPos = new Vector2D(player.transform.getX() + v.getX(), player.transform.getY() + v.getY());
+
+
+            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(player.transform.getY())) == 0){
+                player.transform.moveXBy(v.getX());
+            }
+            if (map.getTileContent(map.getMapX(player.transform.getX()), map.getMapY(newPos.getY())) == 0){
+                player.transform.moveYBy(v.getY());
+            }
+        }
+        if (kl.isKeyDown(KeyEvent.VK_RIGHT)){
             player.transform.rotateAngleDegreesBy((float) (rotationSpeed * dt));
         }
         if (kl.isKeyDown(KeyEvent.VK_E)){
