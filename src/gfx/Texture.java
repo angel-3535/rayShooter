@@ -1,6 +1,7 @@
 package gfx;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
@@ -12,6 +13,12 @@ public class Texture {
     public Color[][] texColorArray;
     public int w;
     public int h;
+    public static Texture t_bricks;
+    public static Texture t_missing;
+    public static Texture t_bricks_R;
+    public static Texture t_bricks_B;
+    public static Texture t_bricks_G;
+    public static Texture t_crate_2c ;
 
     public Texture(String path) throws IOException {
         System.out.println("Loading..." + path);
@@ -25,6 +32,17 @@ public class Texture {
                 texColorArray[y][x] = new Color(img.getRGB(x,y));
             }
         }
+
+    }
+
+    public static void loadTextures() throws IOException {
+
+        t_bricks = new Texture("src/assets/bricks.png");
+        t_bricks_R = new Texture("src/assets/bricks_R.png");
+        t_bricks_B = new Texture("src/assets/bricks_B.png");
+        t_bricks_G = new Texture("src/assets/bricks_G.png");
+        t_missing = new Texture("src/assets/missing.png");
+        t_crate_2c = new Texture("src/assets/CRATE_2C.png");
 
     }
 }

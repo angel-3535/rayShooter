@@ -1,10 +1,10 @@
 package util;
 
 import gfx.Renderable;
+import gfx.Texture;
 
 import java.awt.*;
 import static java.lang.Math.PI;
-import static java.lang.Math.cos;
 
 public class Ray implements Renderable {
     public static final float RAD = 0.0174533F;
@@ -18,6 +18,7 @@ public class Ray implements Renderable {
     public int depth=0;
     public int hitValue = 0;
     public boolean darker = false;
+    public Texture wallTexture;
     public Color wallColor = Color.green;
 
     public Ray(float startingX, float startingY, float Angle){
@@ -42,7 +43,7 @@ public class Ray implements Renderable {
         mapPos.setX( map.getMapX(hit.getX()) );
         mapPos.setY( map.getMapY(hit.getY()) );
         hitValue = map.getTileContent((int) mapPos.getX(), (int) mapPos.getY());
-        determineWallColor();
+        determineWallText();
     }
 
     private void horizontalTrace(Map map){
@@ -151,33 +152,27 @@ public class Ray implements Renderable {
         }
 
     }
-    public void determineWallColor(){
+    public void determineWallText(){
         switch (hitValue){
             case 1:
-                wallColor = Color.green;
+                wallColor = Color.darkGray;
+                wallTexture = Texture.t_bricks;
                 break;
             case 2:
                 wallColor = Color.red;
+                wallTexture = Texture.t_bricks_R;
                 break;
             case 3:
                 wallColor = Color.blue;
+                wallTexture = Texture.t_bricks_B;
                 break;
             case 4:
-                wallColor = Color.orange;
-                break;
-            case 5:
-                wallColor = Color.pink;
-                break;
-            case 6:
-                wallColor = Color.yellow;
-                break;
-            case 7:
-                wallColor = Color.darkGray;
-                break;
-            case 8:
-                wallColor = Color.white;
+                wallColor = Color.GREEN;
+                wallTexture = Texture.t_crate_2c;
                 break;
             default:
+                wallColor = Color.white;
+                wallTexture = Texture.t_missing;
 
                 break;
         }

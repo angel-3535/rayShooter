@@ -17,7 +17,7 @@ public class Window extends JFrame {
 
     private Window(){
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setSize(1024,512);
+        this.setSize(1024,1024 * 3/4);
         this.setResizable(false);
         this.setVisible(true);
         this.setTitle("rayshooter");
