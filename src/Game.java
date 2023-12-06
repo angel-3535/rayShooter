@@ -29,6 +29,7 @@ public class Game implements Runnable, Renderable {
     final KL kl = KL.getKeyListener();
     final ML ml = ML.getMouseListener();
     float moveSpeed;
+    float reach;
     int maxRenderLineHeight ;
     int totalRays = 120;
     final float FOV = (float) Math.toRadians(60);
@@ -52,6 +53,7 @@ public class Game implements Runnable, Renderable {
         player.transform.rotateAngleRadiansBy(10* RAD);
 
         moveSpeed = map.getTileSize() * 6 ;
+        reach = (float) (map.getTileSize() * 1.5);
 
         gunSprite = new ImageIcon("src/assets/handgun.png");
         weaponY =  window.getHeight() - gunSprite.getIconHeight();
@@ -94,39 +96,21 @@ public class Game implements Runnable, Renderable {
         if (kl.isKeyDown(KeyEvent.VK_A)){
             player.transform.rotateAngleDegreesBy((float) -(rotationSpeed * dt));
         }
-        if (kl.isKeyDown(KeyEvent.VK_LEFT)){
-            player.transform.rotateAngleDegreesBy((float) -(rotationSpeed * dt));
-        }
         if (kl.isKeyDown(KeyEvent.VK_D)){
             player.transform.rotateAngleDegreesBy((float) (rotationSpeed * dt));
         }
-        if (kl.isKeyDown(KeyEvent.VK_RIGHT)){
-            player.transform.rotateAngleDegreesBy((float) (rotationSpeed * dt));
+        if (kl.isKeyDown(KeyEvent.VK_E)){
+            Vector2D v = new Vector2D(player.transform.getFoward());
+            v.multiply(reach);
+
+            Vector2D newPos = new Vector2D(player.transform.getX() + v.getX(), player.transform.getY() + v.getY());
+
+
+            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(newPos.getY())) == 22){
+                map.setTileContent(map.getMapX(newPos.getX()), map.getMapY(newPos.getY()), 0);
+            }
         }
-        if (kl.isKeyDown(KeyEvent.VK_1)){
-            newWallVal = 1;
-        }
-        if (kl.isKeyDown(KeyEvent.VK_2)){
-            newWallVal = 2;
-        }
-        if (kl.isKeyDown(KeyEvent.VK_3)){
-            newWallVal = 3;
-        }
-        if (kl.isKeyDown(KeyEvent.VK_4)){
-            newWallVal = 4;
-        }
-        if (kl.isKeyDown(KeyEvent.VK_5)){
-            newWallVal = 5;
-        }
-        if (kl.isKeyDown(KeyEvent.VK_6)){
-            newWallVal = 6;
-        }
-        if (kl.isKeyDown(KeyEvent.VK_7)){
-            newWallVal = 7;
-        }
-        if (kl.isKeyDown(KeyEvent.VK_8)){
-            newWallVal = 8;
-        }
+
 
         if (kl.isKeyDown(KeyEvent.VK_W) || kl.isKeyDown(KeyEvent.VK_S)){
             moving = true;
@@ -202,16 +186,9 @@ public class Game implements Runnable, Renderable {
             float textureX;
 
             if (r.darker){
-
                 textureX = (int) (r.hit.getY()) % map.getTileSize();
-                if (r.rayAngle > Math.toRadians(180)){  textureX = map.getTileSize()-1  - textureX; }
-
             }else{
                 textureX = (int) (r.hit.getX()) % map.getTileSize();
-
-                if (r.rayAngle > Math.toRadians(90) && rayAngle < Math.toRadians(270)){
-                    textureX = map.getTileSize()-1  - textureX;
-                }
             }
 
 

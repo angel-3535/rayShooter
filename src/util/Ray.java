@@ -170,6 +170,10 @@ public class Ray implements Renderable {
                 wallColor = Color.GREEN;
                 wallTexture = Texture.t_crate_2c;
                 break;
+            case 22:
+                wallColor = Color.black;
+                wallTexture = Texture.t_door_1c;
+                break;
             default:
                 wallColor = Color.white;
                 wallTexture = Texture.t_missing;

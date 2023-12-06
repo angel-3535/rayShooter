@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="rayshooter:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/rayshooter_jar</output-path>
+    <root id="archive" name="rayshooter.jar">
+      <element id="module-output" name="rayshooter" />
+    </root>
+  </artifact>
+</component>

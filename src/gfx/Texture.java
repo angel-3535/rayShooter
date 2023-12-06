@@ -19,6 +19,7 @@ public class Texture {
     public static Texture t_bricks_B;
     public static Texture t_bricks_G;
     public static Texture t_crate_2c ;
+    public static Texture t_door_1c ;
 
     public Texture(String path) throws IOException {
         System.out.println("Loading..." + path);
@@ -43,6 +44,7 @@ public class Texture {
         t_bricks_G = new Texture("src/assets/bricks_G.png");
         t_missing = new Texture("src/assets/missing.png");
         t_crate_2c = new Texture("src/assets/CRATE_2C.png");
+        t_door_1c = new Texture("src/assets/DOOR_1C.png");
 
     }
 }
