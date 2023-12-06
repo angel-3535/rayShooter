@@ -20,6 +20,10 @@ public class Texture {
     public static Texture t_bricks_G;
     public static Texture t_crate_2c ;
     public static Texture t_door_1c ;
+    public static Texture t_floor_1a ;
+    public static Texture t_pipes_1a ;
+    public static Texture t_tech_1c ;
+
 
     public Texture(String path) throws IOException {
         System.out.println("Loading..." + path);
@@ -33,6 +37,9 @@ public class Texture {
                 texColorArray[y][x] = new Color(img.getRGB(x,y));
             }
         }
+        System.out.println("testing: " + path);
+        Color textureColor = texColorArray[0][0];
+        System.out.println("test pass");
 
     }
 
@@ -44,7 +51,10 @@ public class Texture {
         t_bricks_G = new Texture("src/assets/bricks_G.png");
         t_missing = new Texture("src/assets/missing.png");
         t_crate_2c = new Texture("src/assets/CRATE_2C.png");
-        t_door_1c = new Texture("src/assets/DOOR_1C.png");
+        t_floor_1a = new Texture("src/assets/FLOOR_1A.png");
+        t_pipes_1a = new Texture("src/assets/PIPES_1A.png");
+        t_tech_1c = new Texture("src/assets/TECH_1C.PNG");
+        t_door_1c = new Texture("src/assets/DOOR_1C.PNG");
 
     }
 }

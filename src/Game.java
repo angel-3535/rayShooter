@@ -140,6 +140,8 @@ public class Game implements Runnable, Renderable {
     }
     public void castRays(Graphics g){
 
+        //TODO add ceiling and render
+
         int rayNumber=0;
 
         float rayAngle = player.transform.getAngleRadians() - FOV/2;

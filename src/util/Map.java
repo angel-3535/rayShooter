@@ -17,7 +17,7 @@ public class Map implements Renderable {
     }
 
     public Map(){
-        layout = Rooms.room1;
+        layout = Rooms.room1[0];
         TileSize = 64;
     }
 

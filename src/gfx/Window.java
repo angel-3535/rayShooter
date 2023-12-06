@@ -24,8 +24,9 @@ public class Window extends JFrame {
         addKeyListener(KL.getKeyListener());
         addMouseListener(ML.getMouseListener());
         volatileR = true;
-        System.setProperty("sun.java2d.opengl", "true");
+//        System.setProperty("sun.java2d.opengl", "true");
 
+        System.out.println(System.getProperty("sun.java2d.opengl"));
         ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
     }

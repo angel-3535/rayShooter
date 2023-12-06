@@ -156,7 +156,7 @@ public class Ray implements Renderable {
         switch (hitValue){
             case 1:
                 wallColor = Color.darkGray;
-                wallTexture = Texture.t_bricks;
+                wallTexture = Texture.t_tech_1c;
                 break;
             case 2:
                 wallColor = Color.red;
@@ -177,8 +177,10 @@ public class Ray implements Renderable {
             default:
                 wallColor = Color.white;
                 wallTexture = Texture.t_missing;
-
                 break;
+        }
+        if (wallTexture==null){
+            wallTexture = Texture.t_missing;
         }
         if (darker) {wallColor = wallColor.darker();}
     }
