@@ -1,4 +1,5 @@
 import gfx.Renderable;
+import gfx.Texture;
 import gfx.Window;
 import util.*;
 import util.io.KL;
@@ -8,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -22,22 +24,22 @@ public class Game implements Runnable, Renderable {
     private ImageIcon gunSprite;
     private boolean moving = false;
     float weaponX = 0 ,weaponY =  0;
-    float lineYOffset = 0;
 
     Player player = new Player();
     final KL kl = KL.getKeyListener();
     final ML ml = ML.getMouseListener();
     final float moveSpeed = 120f;
-    final int maxRenderLineHeight = 520;
+    final int maxRenderLineHeight = 320;
     final int totalRays = 120;
     private int newWallVal = 1;
     private Color f_Color = new Color(40, 23, 23,255);
     private Color c_Color = new Color(30, 55, 58,255);
 
+    Texture t_bricks;
     Map map = new Map();
 
 
-    public Game(){
+    public Game() throws IOException {
         window = Window.getWindow();
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         window.setSize(1024,512);
@@ -50,11 +52,11 @@ public class Game implements Runnable, Renderable {
         player.transform.rotateAngleRadiansBy(10* RAD);
 
         gunSprite = new ImageIcon("src/assets/handgun.png");
+        t_bricks = new Texture("src/assets/bricks.png");
 
         weaponY =  512 - 256;
         weaponX = 1024 - 256;
     }
-
     public void drawMap2D(Graphics g){
         int x,y,xo,yo;
         for (y = 0; y < map.getMapSize(); y++){
@@ -77,12 +79,6 @@ public class Game implements Runnable, Renderable {
             }
         }
     }
-
-    public float getRayLength(float x1, float y1, float x2, float y2){
-        return (float) Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
-    }
-
-
     public void castRays(Graphics g){
 
         int rayNumber=0;
@@ -116,21 +112,41 @@ public class Game implements Runnable, Renderable {
             r.disT = (float)(r.disT * cos(ca));
 //            ends fix for fish eye
             float lineH = (map.getTileSize() * 2 * maxRenderLineHeight) / r.disT;
+
+
+            float textureYStep = (32f/lineH);
+            float textureYOffset = 0;
+
             if (lineH> maxRenderLineHeight){
+                textureYOffset = (lineH - maxRenderLineHeight) / 2f;
                 lineH = maxRenderLineHeight;
             }
-            float lineOffset = 160-lineH/2 + lineYOffset;
+            float lineOffset = 160-lineH/2;
             int lines= (int) (512.0/totalRays) + 1;
 
-            g.fillRect(rayNumber*lines + 512,(int)lineOffset + 100,lines,(int)lineH);
+
+
+            float textureY = textureYOffset * textureYStep;
+            float textureX = (int) (r.hit.getX()) % map.getTileSize() * 2f;
+            for(int wallPixel=0; wallPixel < lineH; wallPixel ++){
+//                Color textureColor = Texture.checkboardTexture[(int) textureY][(int)textureX];
+
+//                if (r.darker){
+//                    wa.darker();
+//                }else {
+//                    textureColor.brighter();
+//                }
+//                g.setColor(textureColor);
+
+                g.fillRect(rayNumber*lines + 512,(int)lineOffset + 100 + wallPixel,lines,(int)1);
+                textureY += textureYStep;
+            }
 
             rayAngle += RAD/2;
             if (rayAngle <    0){ rayAngle+=2*PI; }
             if (rayAngle > 2*PI){ rayAngle-=2*PI; }
 
         }
-
-
     }
     public void drawPlayer2D(Graphics g){
 

@@ -17,7 +17,7 @@ public class Ray implements Renderable {
     public int maxDepth;
     public int depth=0;
     public int hitValue = 0;
-    boolean darker = false;
+    public boolean darker = false;
     public Color wallColor = Color.green;
 
     public Ray(float startingX, float startingY, float Angle){

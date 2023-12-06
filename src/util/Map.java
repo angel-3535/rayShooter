@@ -17,8 +17,8 @@ public class Map implements Renderable {
     }
 
     public Map(){
-        layout = Rooms.room2;
-        TileSize = 8;
+        layout = Rooms.room1;
+        TileSize = 16;
     }
 
     public Vector2D getMapPos(Vector2D v){
