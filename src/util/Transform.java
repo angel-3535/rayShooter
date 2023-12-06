@@ -182,9 +182,6 @@ public class Transform {
     public void rotateAngleDegreesBy(float angle){
         this.setAngleDegrees(getAngleDegrees() + angle);
     }
-
-
-
     private void calculateFoward(){
 //        playerDX = (float) cos(playerAngle) * 5;
 //       playerDY = (float) Math.sin(playerAngle) * 5;
@@ -193,6 +190,10 @@ public class Transform {
         v.setY((float) sin(getAngleRadians()));
         v.normalize();
         foward.setX(v.getX()); foward.setY(v.getY());
+    }
+
+    public Vector2D getFowardNormal(){
+        return new Vector2D(-foward.getY(), foward.getX());
     }
 
 
