@@ -30,7 +30,7 @@ public class Game implements Runnable, Renderable {
     float moveSpeed;
     float reach;
     int maxRenderLineHeight ;
-    int totalRays = 120;
+    int totalRays = 240;
     final float FOV = (float) Math.toRadians(60);
     final float rayStep = FOV/totalRays;
     private int newWallVal = 1;
@@ -227,24 +227,31 @@ public class Game implements Runnable, Renderable {
 
                 raFix = (float) cos(raFix);
 
-                float mn = (float) ((window.getWidth()/2f)/tan(FOV/2));
-
-
-
-                textureX = (float) (player.transform.getX()/2f + cos(rayAngle) * 158* 64/dy/raFix);
-                textureY = (float) (player.transform.getY()/2f + sin(rayAngle) * 158* 64/dy/raFix);
+                textureX = (float) (player.transform.getX()/2f + cos(rayAngle) * 158* 64/ dy /raFix);
+                textureY = (float) (player.transform.getY()/2f + sin(rayAngle) * 158* 64/ dy /raFix);
                 try {
 
-                    Texture t_floor = map.getFloorTexture(map.floor[(int) (textureY/64)][(int) (textureX/64f)]);
+                    Texture texture = map.getFloorTexture((map.floor[(int) (textureY/64)][(int) (textureX/64f)]));
 
 
                     //INSANE BIT FUCKERY (USE BITWISE AND TO ONLY GET THE VALUE OF THE FIRST 32 NUMBERS)
-                    Color textureColor = t_floor.texColorArray[(int) (textureY)&31 ][(int) (textureX )&31];
+                    Color t_pixelColor = texture.texColorArray[(int) (textureY)&31 ][(int) (textureX )&31];
 
-                    g.setColor(textureColor);
+                    g.setColor(t_pixelColor);
                     g.fillRect((int) (lineWidth * rayNumber ), y, (int) lineWidth,1);
+
+                    //Draw Ceiling
+
+                    texture = map.getCeilingTexture((map.ceiling[(int) (textureY/64)][(int) (textureX/64f)]));
+                    t_pixelColor = texture.texColorArray[(int) (textureY)&31 ][(int) (textureX )&31];
+
+                    g.setColor(t_pixelColor);
+
+                    g.fillRect((int) (lineWidth * rayNumber ), 640 - y, (int) lineWidth,1);
+
+
                 }catch (Exception e){
-//                    System.out.println("error: " +textureX +", " + textureY);
+//
                 }
 
 

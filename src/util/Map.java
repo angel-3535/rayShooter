@@ -39,13 +39,13 @@ public class Map implements Renderable {
         return v;
     }
 
+
     public int getMapX(float x){
         return (int) (x/ TileSize);
     }
     public int getMapY(float y){
         return (int) (y/ TileSize);
     }
-
     public int getTileContent(int x, int y){
         x = clamp(x, 0, getMapSize() -1 );
         y = clamp(y, 0, getMapSize() -1 );
@@ -89,10 +89,20 @@ public class Map implements Renderable {
                 return Texture.t_floor_1a;
 
             case 2:
-                return Texture.t_floor_1a;
+                return Texture.t_grass_1a;
 
             case 3:
-                return Texture.t_floor_1a;
+                return Texture.t_dirt_1a;
+
+            default:
+                return Texture.t_missing;
+        }
+    }
+
+    public Texture getCeilingTexture(int i){
+        switch (i){
+            case 1:
+                return Texture.t_pipes_1a;
 
             default:
                 return Texture.t_missing;
