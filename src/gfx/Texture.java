@@ -21,6 +21,8 @@ public class Texture {
     public static Texture t_crate_2c ;
     public static Texture t_door_1c ;
     public static Texture t_floor_1a ;
+    public static Texture t_grass_1a ;
+    public static Texture t_dirt_1a ;
     public static Texture t_pipes_1a ;
     public static Texture t_tech_1c ;
 
@@ -55,6 +57,8 @@ public class Texture {
         t_pipes_1a = new Texture("src/assets/PIPES_1A.png");
         t_tech_1c = new Texture("src/assets/TECH_1C.PNG");
         t_door_1c = new Texture("src/assets/DOOR_1C.PNG");
+        t_grass_1a = new Texture("src/assets/GRASS_1A.PNG");
+        t_dirt_1a = new Texture("src/assets/DIRT_1A.PNG");
 
     }
 }

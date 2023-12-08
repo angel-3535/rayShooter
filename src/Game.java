@@ -11,8 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
+import static java.lang.Math.*;
 
 public class Game implements Runnable, Renderable {
 
@@ -149,26 +148,8 @@ public class Game implements Runnable, Renderable {
 
 //        mouseInputs(dt);
     }
-    public void mouseInputs(double dt){
-        if (ml.isPressed(MouseEvent.BUTTON1)){
-            Vector2D v = map.getMapPos((float)ml.getX(),(float) ml.getY());
 
-            if( v.getX() <  map.getMapSize() && v.getY() <  map.getMapSize()) {
-                map.setTileContent((int)v.getX(),(int)v.getY(), newWallVal);
-            }
-        }
-
-        if (ml.isPressed(MouseEvent.BUTTON3)){
-            Vector2D v = map.getMapPos((float)ml.getX(),(float) ml.getY());
-
-            if( v.getX() <  map.getMapSize() && v.getY() <  map.getMapSize()) {
-                map.setTileContent((int)v.getX(),(int)v.getY(), 0);
-            }
-        }
-    }
     public void castRays(Graphics g){
-
-        //TODO add ceiling and render
 
         int rayNumber=0;
 
@@ -236,56 +217,47 @@ public class Game implements Runnable, Renderable {
                 textureY += textureYStep;
             }
 
+            //---Draw Floors---
+            for(int y = (int) (lineOffset + lineH); y < window.getHeight(); y++){
+                float dy = (float) y - (window.getHeight()/2f);
+
+                float raFix = player.transform.getAngleRadians() - rayAngle;
+                if (raFix <    0){ raFix+=2*PI; }
+                if (raFix > 2*PI){ raFix-=2*PI; }
+
+                raFix = (float) cos(raFix);
+
+                float mn = (float) ((window.getWidth()/2f)/tan(FOV/2));
+
+
+
+                textureX = (float) (player.transform.getX()/2f + cos(rayAngle) * 158* 64/dy/raFix);
+                textureY = (float) (player.transform.getY()/2f + sin(rayAngle) * 158* 64/dy/raFix);
+                try {
+
+                    Texture t_floor = map.getFloorTexture(map.floor[(int) (textureY/64)][(int) (textureX/64f)]);
+
+
+                    //INSANE BIT FUCKERY (USE BITWISE AND TO ONLY GET THE VALUE OF THE FIRST 32 NUMBERS)
+                    Color textureColor = t_floor.texColorArray[(int) (textureY)&31 ][(int) (textureX )&31];
+
+                    g.setColor(textureColor);
+                    g.fillRect((int) (lineWidth * rayNumber ), y, (int) lineWidth,1);
+                }catch (Exception e){
+//                    System.out.println("error: " +textureX +", " + textureY);
+                }
+
+
+
+            }
+
             rayAngle += rayStep;
             if (rayAngle <    0){ rayAngle+=2*PI; }
             if (rayAngle > 2*PI){ rayAngle-=2*PI; }
 
         }
     }
-    public void drawMap2D(Graphics g){
-        int x,y,xo,yo;
-        for (y = 0; y < map.getMapSize(); y++){
-            for (x = 0; x < map.getMapSize(); x++){
 
-                if (map.getTileContent(x,y)!=0){
-                    g.setColor(Color.white);
-                }else{
-                    g.setColor(Color.black);
-                }
-
-                xo = (int) (x* map.getTileSize()* mapScale); yo = (int) (y* map.getTileSize() * mapScale);
-
-                g.fillRect(xo,yo, (int) (map.getTileSize()* mapScale), (int) (map.getTileSize()* mapScale));
-
-                g.setColor(Color.GRAY);
-                g.drawRect(xo,yo, (int) (map.getTileSize()* mapScale), (int) (map.getTileSize()* mapScale));
-
-
-            }
-        }
-    }
-    public void drawPlayer2D(Graphics g){
-
-        g.setColor(Color.yellow);
-        g.fillRect((int) (player.transform.getX() *  mapScale), (int) (player.transform.getY() * mapScale), (int) 8, (int)  8);
-        g.setColor(Color.red);
-
-    }
-    public void drawWeapon(Graphics g){
-        if (moving){
-            weaponX = (float) (1024 - 256 - (cos(Time.getTime()) * 15));
-            weaponY = (float) (512 -  256 - (sin(Time.getTime()) * 5));
-        }
-        g.drawImage(
-                gunSprite.getImage(),
-                (int) weaponX,
-                (int) weaponY,
-                256,
-                256,
-                null
-        );
-
-    }
     public void draw(Graphics g){
 
         g.setColor(c_Color);
@@ -307,7 +279,7 @@ public class Game implements Runnable, Renderable {
         inputs(dt);
 
         frameRate = (int) (1/dt);
-        displayInfo = String.format("%d FPS (%.3f)", frameRate,dt);
+        displayInfo = String.format("%d FPS (%.4f)", frameRate,dt);
         window.render(this);
     }
 

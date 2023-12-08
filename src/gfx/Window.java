@@ -17,14 +17,17 @@ public class Window extends JFrame {
 
     private Window(){
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setSize(1024,1024 * 3/4);
+        int width = 960;
+        int height = 640;
+
+        this.setSize(width, height);
         this.setResizable(false);
         this.setVisible(true);
         this.setTitle("rayshooter");
         addKeyListener(KL.getKeyListener());
         addMouseListener(ML.getMouseListener());
-        volatileR = true;
-//        System.setProperty("sun.java2d.opengl", "true");
+        volatileR = false;
+        System.setProperty("sun.java2d.opengl", "true");
 
         System.out.println(System.getProperty("sun.java2d.opengl"));
         ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
