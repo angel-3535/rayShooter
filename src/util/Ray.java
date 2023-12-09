@@ -55,7 +55,7 @@ public class Ray implements Renderable {
 
         //if ray is angle down
         if (rayAngle > PI){
-            rayPos.setY((float) (((int) origin.getY() / map.getTileSize()) * (map.getTileSize()) -0.0001));
+            rayPos.setY((float) (((int) origin.getY() >> 6) * (map.getTileSize()) -0.0001));
             rayPos.setX(((origin.getY() - rayPos.getY()) * angleTangent) + origin.getX()) ;
             yOffset =-map.getTileSize(); xOffset = -yOffset * angleTangent;
         }

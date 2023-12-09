@@ -47,18 +47,18 @@ public class Texture {
 
     public static void loadTextures() throws IOException {
 
-        t_bricks = new Texture("src/assets/bricks.png");
-        t_bricks_R = new Texture("src/assets/bricks_R.png");
-        t_bricks_B = new Texture("src/assets/bricks_B.png");
-        t_bricks_G = new Texture("src/assets/bricks_G.png");
-        t_missing = new Texture("src/assets/missing.png");
-        t_crate_2c = new Texture("src/assets/CRATE_2C.png");
-        t_floor_1a = new Texture("src/assets/FLOOR_1A.png");
-        t_pipes_1a = new Texture("src/assets/PIPES_1A.png");
-        t_tech_1c = new Texture("src/assets/TECH_1C.PNG");
-        t_door_1c = new Texture("src/assets/DOOR_1C.PNG");
-        t_grass_1a = new Texture("src/assets/GRASS_1A.PNG");
-        t_dirt_1a = new Texture("src/assets/DIRT_1A.PNG");
+        t_bricks = new Texture("src/assets/textures/bricks.png");
+        t_bricks_R = new Texture("src/assets/textures/bricks_R.png");
+        t_bricks_B = new Texture("src/assets/textures/bricks_B.png");
+        t_bricks_G = new Texture("src/assets/textures/bricks_G.png");
+        t_missing = new Texture("src/assets/textures/missing.png");
+        t_crate_2c = new Texture("src/assets/textures/CRATE_2C.png");
+        t_floor_1a = new Texture("src/assets/textures/FLOOR_1A.png");
+        t_pipes_1a = new Texture("src/assets/textures/PIPES_1A.png");
+        t_tech_1c = new Texture("src/assets/textures/TECH_1C.PNG");
+        t_door_1c = new Texture("src/assets/textures/DOOR_1C.PNG");
+        t_grass_1a = new Texture("src/assets/textures/GRASS_1A.PNG");
+        t_dirt_1a = new Texture("src/assets/textures/DIRT_1A.PNG");
 
     }
 }

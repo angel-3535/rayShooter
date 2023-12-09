@@ -4,6 +4,7 @@ import gfx.Window;
 import util.*;
 import util.io.KL;
 import util.io.ML;
+import util.io.Sound;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,135 +20,39 @@ public class Game implements Runnable, Renderable {
     int frameRate = 0;
     String displayInfo = "";
     private final float PI = (float) Math.PI, RAD = 0.0174533F;
-    private float rotationSpeed = 270f;
-    private ImageIcon gunSprite;
-    private boolean moving = false;
-    float weaponX = 0 ,weaponY =  0;
 
-    Player player = new Player();
+    Player player;
     final KL kl = KL.getKeyListener();
     final ML ml = ML.getMouseListener();
-    float moveSpeed;
-    float reach;
     int maxRenderLineHeight ;
-    int totalRays = 240;
-    final float FOV = (float) Math.toRadians(60);
+    int totalRays = 150;
+    final float FOV = (float) Math.toRadians(75);
     final float rayStep = FOV/totalRays;
-    private int newWallVal = 1;
     private Color f_Color = new Color(40, 23, 23,255);
     private Color c_Color = new Color(30, 55, 58,255);
 
-    final float mapScale = 1f/10f;
-
-
     Map map = new Map();
+
 
 
     public Game() throws IOException {
         window = Window.getWindow();
         maxRenderLineHeight = window.getHeight();
 
+        player = new Player(0, map);
 
         player.transform.setPosition(300f,300f);
         player.transform.rotateAngleRadiansBy(10* RAD);
 
-        moveSpeed = map.getTileSize() * 6 ;
-        reach = (float) (map.getTileSize() * 1.5);
-
-        gunSprite = new ImageIcon("src/assets/handgun.png");
-        weaponY =  window.getHeight() - gunSprite.getIconHeight();
-        weaponX = window.getWidth() - gunSprite.getIconWidth();
-
+        player.moveSpeed = map.getTileSize() * 6 ;
 
         Texture.loadTextures();
+
+        Sound.playMusic(Sound.M_HELL_ON_EARTH.getClip());
+
     }
 
 
-    public void inputs(double dt){
-        if (kl.isKeyDown(KeyEvent.VK_W)){
-            Vector2D v = new Vector2D(player.transform.getFoward());
-            v.multiply((float) (moveSpeed * dt));
-
-            Vector2D newPos = new Vector2D(player.transform.getX() + v.getX(), player.transform.getY() + v.getY());
-
-
-            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(player.transform.getY())) == 0){
-                player.transform.moveXBy(v.getX());
-            }
-            if (map.getTileContent(map.getMapX(player.transform.getX()), map.getMapY(newPos.getY())) == 0){
-                player.transform.moveYBy(v.getY());
-            }
-        }
-        if (kl.isKeyDown(KeyEvent.VK_S)){
-            Vector2D v = new Vector2D(player.transform.getFoward());
-            v.multiply((float) - (moveSpeed * dt));
-
-            Vector2D newPos = new Vector2D(player.transform.getX() + v.getX(), player.transform.getY() + v.getY());
-
-
-            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(player.transform.getY())) == 0){
-                player.transform.moveXBy(v.getX());
-            }
-            if (map.getTileContent(map.getMapX(player.transform.getX()), map.getMapY(newPos.getY())) == 0){
-                player.transform.moveYBy(v.getY());
-            }
-        }
-        if (kl.isKeyDown(KeyEvent.VK_A)){
-            Vector2D v = new Vector2D(player.transform.getFowardNormal());
-            v.multiply((float) (-moveSpeed * dt));
-
-            Vector2D newPos = new Vector2D(player.transform.getX() + v.getX(), player.transform.getY() + v.getY());
-
-
-            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(player.transform.getY())) == 0){
-                player.transform.moveXBy(v.getX());
-            }
-            if (map.getTileContent(map.getMapX(player.transform.getX()), map.getMapY(newPos.getY())) == 0){
-                player.transform.moveYBy(v.getY());
-            }
-        }
-        if (kl.isKeyDown(KeyEvent.VK_LEFT)){
-            player.transform.rotateAngleDegreesBy((float) -(rotationSpeed * dt));
-        }
-        if (kl.isKeyDown(KeyEvent.VK_D)){
-            Vector2D v = new Vector2D(player.transform.getFowardNormal());
-            v.multiply((float) (moveSpeed * dt));
-
-            Vector2D newPos = new Vector2D(player.transform.getX() + v.getX(), player.transform.getY() + v.getY());
-
-
-            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(player.transform.getY())) == 0){
-                player.transform.moveXBy(v.getX());
-            }
-            if (map.getTileContent(map.getMapX(player.transform.getX()), map.getMapY(newPos.getY())) == 0){
-                player.transform.moveYBy(v.getY());
-            }
-        }
-        if (kl.isKeyDown(KeyEvent.VK_RIGHT)){
-            player.transform.rotateAngleDegreesBy((float) (rotationSpeed * dt));
-        }
-        if (kl.isKeyDown(KeyEvent.VK_E)){
-            Vector2D v = new Vector2D(player.transform.getFoward());
-            v.multiply(reach);
-
-            Vector2D newPos = new Vector2D(player.transform.getX() + v.getX(), player.transform.getY() + v.getY());
-
-
-            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(newPos.getY())) == 22){
-                map.setTileContent(map.getMapX(newPos.getX()), map.getMapY(newPos.getY()), 0);
-            }
-        }
-
-
-        if (kl.isKeyDown(KeyEvent.VK_W) || kl.isKeyDown(KeyEvent.VK_S)){
-            moving = true;
-        }
-        else{
-            moving = false;
-        }
-
-//        mouseInputs(dt);
-    }
 
     public void castRays(Graphics g){
 
@@ -168,7 +73,6 @@ public class Game implements Runnable, Renderable {
                     rayAngle
             );
             r.trace(map);
-//            r.draw(g);
             g.setColor(r.wallColor);
 
 //            ----DRAW 3D WALLS----
@@ -210,6 +114,8 @@ public class Game implements Runnable, Renderable {
                 if (r.darker){
                     textureColor = textureColor.darker();
                 }
+
+                textureColor = new Color(textureColor.getRed(),textureColor.getGreen(),textureColor.getBlue());
 
                 g.setColor(textureColor);
 
@@ -283,7 +189,7 @@ public class Game implements Runnable, Renderable {
 
     public void update(double dt){
 
-        inputs(dt);
+        player.inputs(dt);
 
         frameRate = (int) (1/dt);
         displayInfo = String.format("%d FPS (%.4f)", frameRate,dt);
