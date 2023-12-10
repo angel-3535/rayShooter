@@ -1,3 +1,4 @@
+import Entity.Player;
 import util.Map;
 
 import java.awt.*;

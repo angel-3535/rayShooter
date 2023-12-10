@@ -26,6 +26,7 @@ public class Texture {
     public static Texture t_dirt_1a ;
     public static Texture t_pipes_1a ;
     public static Texture t_tech_1c ;
+    public static Texture t_sky ;
 
     public static Texture[] textures = new Texture[100];
 
@@ -86,6 +87,9 @@ public class Texture {
 
         t_missing = new Texture("src/assets/textures/missing.png");
         textures[99] = t_missing;
+
+
+        t_sky = new Texture("src/assets/sky/skyBox2.png");
 
     }
 }

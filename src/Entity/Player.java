@@ -1,3 +1,6 @@
+package Entity;
+
+import gfx.Hud;
 import gfx.Texture;
 import gfx.Window;
 import util.Map;
@@ -11,9 +14,8 @@ import java.awt.event.KeyEvent;
 
 import static java.lang.Math.*;
 
-public class Player {
+public class Player extends Entity{
 
-    Transform transform;
     KL kl = KL.getKeyListener();
     public float moveSpeed;
     public float rotationSpeed = 270f;
@@ -25,6 +27,7 @@ public class Player {
     final float rayStep = FOV/totalRays;
 
     public Map map;
+    Hud hud = new Hud();
 
     public Player(float movementSpeed, Map map){
         transform = new Transform(30,300,8,8);
@@ -35,10 +38,6 @@ public class Player {
         maxRenderLineHeight = Window.getWindow().getHeight();
 
     }
-    public void update(double dt){
-        inputs(dt);
-    }
-
     public void inputs(double dt){
         if (kl.isKeyDown(KeyEvent.VK_W)){
             Vector2D v = new Vector2D(this.transform.getFoward());
@@ -125,10 +124,6 @@ public class Player {
 
     public void setMap(Map map){
         this.map = map;
-    }
-
-    public void draw(Graphics g){
-        castRays(g);
     }
 
     public void castRays(Graphics g){
@@ -224,14 +219,14 @@ public class Player {
                     g.fillRect((int) (lineWidth * rayNumber ), y, (int) lineWidth,1);
 
                     //Draw Ceiling
+                    if ((map.ceiling[(int) (textureY/64)][(int) (textureX/64f)] != 0)){
+                        texture = map.getTexture((map.ceiling[(int) (textureY/64)][(int) (textureX/64f)]));
+                        t_pixelColor = texture.texColorArray[(int) (textureY)&31 ][(int) (textureX )&31];
 
-                    texture = map.getTexture((map.ceiling[(int) (textureY/64)][(int) (textureX/64f)]));
-                    t_pixelColor = texture.texColorArray[(int) (textureY)&31 ][(int) (textureX )&31];
+                        g.setColor(t_pixelColor);
 
-                    g.setColor(t_pixelColor);
-
-                    g.fillRect((int) (lineWidth * rayNumber ), 640 - y, (int) lineWidth,1);
-
+                        g.fillRect((int) (lineWidth * rayNumber ), 640 - y, (int) lineWidth,1);
+                    }
 
                 }catch (Exception e){
 //
@@ -247,5 +242,35 @@ public class Player {
 
         }
     }
-    
+    public void drawSky(Graphics g){
+        int imgO = (int) (Window.getWindow().getWidth()/360f)+1;
+        int xo = (int) transform.getAngleDegrees() * imgO;
+        g.drawImage(
+                Texture.t_sky.img.getImage(),
+                xo - Window.getWindow().getWidth(),
+                0,
+                Window.getWindow().getWidth(),
+                Window.getWindow().getHeight()/2,
+                null
+        );
+        g.drawImage(
+                Texture.t_sky.img.getImage(),
+                xo,
+                0,
+                Window.getWindow().getWidth(),
+                Window.getWindow().getHeight()/2,
+                null
+        );
+    }
+
+    public void draw(Graphics g){
+
+        drawSky(g);
+        castRays(g);
+    }
+
+    public void update(double dt){
+        inputs(dt);
+    }
+
 }
