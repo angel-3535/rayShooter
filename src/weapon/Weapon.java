@@ -1,4 +1,8 @@
+package weapon;
+
 import Entity.Entity;
+import gfx.Texture;
+import gfx.Window;
 import util.Vector2D;
 
 import java.awt.*;
@@ -18,6 +22,7 @@ public class Weapon {
     int currentMag;
     ArrayList<Projectile> liveProjectiles = new ArrayList<>();
     double lifeTime;
+    Texture img;
 
     @Override
     public String toString() {
@@ -33,6 +38,11 @@ public class Weapon {
         this.magSize = magSize;
         this.currentMag = magSize;
         this.lifeTime = lifeTime;
+        try {
+            this.img = new Texture("src/assets/weapons/handgun.png");
+        }catch (Exception e){
+
+        }
     }
 
 
@@ -50,7 +60,7 @@ public class Weapon {
 
 //
 //            //createProjectile(travelDirection);
-//            liveProjectiles.add(new Projectile(
+//            liveProjectiles.add(new weapon.Projectile(
 //                    (int) (origin.getX()),
 //                    (int) (origin.getY()),
 //                    bulletTravelDirection,
@@ -63,7 +73,7 @@ public class Weapon {
         }
     }
     public void createProjectile(Vector2D travelDirection) {
-//        liveProjectiles.add(new Projectile(
+//        liveProjectiles.add(new weapon.Projectile(
 //                (int) (owner.transform.getX() + owner.transform.getSize().getX()/2),
 //                (int) (owner.transform.getY() + owner.transform.getSize().getY()/2),
 //                travelDirection,
@@ -96,6 +106,12 @@ public class Weapon {
     }
 
     public void draw(Graphics g) {
+        g.drawImage(
+                img.img.getImage(),
+            Window.getWindow().getWidth()-img.img.getIconWidth(),
+            Window.getWindow().getHeight()-img.img.getIconHeight(),
+                null
+        );
         for (Projectile p:liveProjectiles) {
 //            p.draw(g);
         }

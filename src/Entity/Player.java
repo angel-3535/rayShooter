@@ -8,9 +8,11 @@ import util.Ray;
 import util.Transform;
 import util.Vector2D;
 import util.io.KL;
+import weapon.Weapon;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.WeakHashMap;
 
 import static java.lang.Math.*;
 
@@ -28,6 +30,7 @@ public class Player extends Entity{
 
     public Map map;
     Hud hud = new Hud();
+    Weapon gun = new Weapon(this,40,0.3,1,Integer.MAX_VALUE,3.f);
 
     public Player(float movementSpeed, Map map){
         transform = new Transform(30,300,8,8);
@@ -154,7 +157,7 @@ public class Player extends Entity{
             if (ca > 2*PI){ ca-=2*PI; }
             r.disT = (float)(r.disT * cos(ca));
 //            ends fix for fish eye
-            float lineH = (map.getTileSize() * maxRenderLineHeight) / r.disT;
+            float lineH = (float) ((map.getTileSize() * maxRenderLineHeight) / r.disT);
 
 
             float textureYStep = (63f/lineH);
@@ -267,6 +270,7 @@ public class Player extends Entity{
 
         drawSky(g);
         castRays(g);
+        gun.draw(g);
     }
 
     public void update(double dt){
