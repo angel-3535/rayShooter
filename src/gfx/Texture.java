@@ -11,6 +11,7 @@ import java.io.IOException;
 
 public class Texture {
     public Color[][] texColorArray;
+    public ImageIcon img;
     public int w;
     public int h;
     public static Texture t_bricks;
@@ -26,6 +27,8 @@ public class Texture {
     public static Texture t_pipes_1a ;
     public static Texture t_tech_1c ;
 
+    public static Texture[] textures = new Texture[100];
+
 
     public Texture(String path) throws IOException {
         System.out.println("Loading..." + path);
@@ -39,6 +42,7 @@ public class Texture {
                 texColorArray[y][x] = new Color(img.getRGB(x,y));
             }
         }
+        this.img = new ImageIcon(img);
         System.out.println("testing: " + path);
         Color textureColor = texColorArray[0][0];
         System.out.println("test pass");
@@ -48,17 +52,40 @@ public class Texture {
     public static void loadTextures() throws IOException {
 
         t_bricks = new Texture("src/assets/textures/bricks.png");
+        textures[1] = t_bricks;
+
         t_bricks_R = new Texture("src/assets/textures/bricks_R.png");
+        textures[2] = t_bricks_R;
+
         t_bricks_B = new Texture("src/assets/textures/bricks_B.png");
+        textures[3] = t_bricks_B;
+
         t_bricks_G = new Texture("src/assets/textures/bricks_G.png");
-        t_missing = new Texture("src/assets/textures/missing.png");
+        textures[4] = t_bricks_G;
+
         t_crate_2c = new Texture("src/assets/textures/CRATE_2C.png");
+        textures[5] = t_crate_2c;
+
         t_floor_1a = new Texture("src/assets/textures/FLOOR_1A.png");
-        t_pipes_1a = new Texture("src/assets/textures/PIPES_1A.png");
-        t_tech_1c = new Texture("src/assets/textures/TECH_1C.PNG");
-        t_door_1c = new Texture("src/assets/textures/DOOR_1C.PNG");
+        textures[6] = t_floor_1a;
+
         t_grass_1a = new Texture("src/assets/textures/GRASS_1A.PNG");
+        textures[7] = t_grass_1a;
+
         t_dirt_1a = new Texture("src/assets/textures/DIRT_1A.PNG");
+        textures[8] = t_dirt_1a;
+
+        t_pipes_1a = new Texture("src/assets/textures/PIPES_1A.png");
+        textures[9] = t_pipes_1a;
+
+        t_tech_1c = new Texture("src/assets/textures/TECH_1C.PNG");
+        textures[10] = t_tech_1c;
+
+        t_door_1c = new Texture("src/assets/textures/DOOR_1C.PNG");
+        textures[11] = t_door_1c;
+
+        t_missing = new Texture("src/assets/textures/missing.png");
+        textures[99] = t_missing;
 
     }
 }

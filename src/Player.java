@@ -186,7 +186,8 @@ public class Player {
 
 
             for(int wallPixel=0; wallPixel < lineH; wallPixel ++){
-                Color textureColor = r.wallTexture.texColorArray[(int) textureY][(int) textureX];
+                int hitValue = r.hitValue;
+                Color textureColor = map.getTexture(hitValue).texColorArray[(int) textureY][(int) textureX];
 
                 if (r.darker){
                     textureColor = textureColor.darker();
@@ -209,22 +210,22 @@ public class Player {
 
                 raFix = (float) cos(raFix);
 
-                textureX = (float) (this.transform.getX()/2f + cos(rayAngle) * 158* 64/ dy /raFix);
-                textureY = (float) (this.transform.getY()/2f + sin(rayAngle) * 158* 64/ dy /raFix);
+                textureX = (float) (this.transform.getX() + cos(rayAngle) * 158 * 2* 64/ dy /raFix);
+                textureY = (float) (this.transform.getY() + sin(rayAngle) * 158 * 2* 64/ dy /raFix);
                 try {
 
-                    Texture texture = map.getFloorTexture((map.floor[(int) (textureY/64)][(int) (textureX/64f)]));
+                    Texture texture = map.getTexture((map.floor[(int) (textureY/64)][(int) (textureX/64f)]));
 
 
                     //INSANE BIT FUCKERY (USE BITWISE AND TO ONLY GET THE VALUE OF THE FIRST 32 NUMBERS)
-                    Color t_pixelColor = texture.texColorArray[(int) (textureY)&31 ][(int) (textureX )&31];
+                    Color t_pixelColor = texture.texColorArray[(int) (textureY)&63 ][(int) (textureX )&63];
 
                     g.setColor(t_pixelColor);
                     g.fillRect((int) (lineWidth * rayNumber ), y, (int) lineWidth,1);
 
                     //Draw Ceiling
 
-                    texture = map.getCeilingTexture((map.ceiling[(int) (textureY/64)][(int) (textureX/64f)]));
+                    texture = map.getTexture((map.ceiling[(int) (textureY/64)][(int) (textureX/64f)]));
                     t_pixelColor = texture.texColorArray[(int) (textureY)&31 ][(int) (textureX )&31];
 
                     g.setColor(t_pixelColor);

@@ -41,7 +41,8 @@ public class ML extends MouseAdapter implements MouseMotionListener {
      */
     @Override
     public void mousePressed(MouseEvent e){
-        mouseMoved(e);
+        x = e.getX();
+        y = e.getY();
         buttonPressedDictionary.put(e.getButton(),true);
 
     }
@@ -77,8 +78,8 @@ public class ML extends MouseAdapter implements MouseMotionListener {
      */
     @Override
     public void mouseDragged(MouseEvent e){
-        mouseMoved(e);
-        mouseDragging = true;
+        x = e.getX();
+        y = e.getY();
     }
 
     /**
@@ -90,10 +91,10 @@ public class ML extends MouseAdapter implements MouseMotionListener {
     public boolean isMouseInsideRect(Rect rect){
 
 
-        boolean  leftEdge  = mouseListener.x >= rect.x;
-        boolean  RightEdge = mouseListener.x <= rect.x+ rect.w;
-        boolean  UpperEdge = mouseListener.y >= rect.y;
-        boolean  LowerEdge = mouseListener.y <= rect.y+rect.h;
+        boolean  leftEdge  = this.x >= rect.x;
+        boolean  RightEdge = this.x <= rect.x+ rect.w;
+        boolean  UpperEdge = this.y >= rect.y;
+        boolean  LowerEdge = this.y <= rect.y+rect.h;
 
         return (leftEdge && RightEdge && UpperEdge &&  LowerEdge );
     }

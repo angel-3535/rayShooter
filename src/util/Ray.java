@@ -16,7 +16,7 @@ public class Ray implements Renderable {
     public float disT = Float.MAX_VALUE;
     public int maxDepth;
     public int depth=0;
-    public int hitValue = 0;
+    public int hitValue;
     public boolean darker = false;
     public Texture wallTexture;
     public Color wallColor = Color.green;
@@ -35,7 +35,6 @@ public class Ray implements Renderable {
         return (float) Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
     }
 
-
     public void trace(Map map){
         maxDepth = (int) (map.getMapSize() * 1.5);
         horizontalTrace(map);
@@ -43,7 +42,7 @@ public class Ray implements Renderable {
         mapPos.setX( map.getMapX(hit.getX()) );
         mapPos.setY( map.getMapY(hit.getY()) );
         hitValue = map.getTileContent((int) mapPos.getX(), (int) mapPos.getY());
-        determineWallText();
+        determineWallText(map);
     }
 
     private void horizontalTrace(Map map){
@@ -152,33 +151,8 @@ public class Ray implements Renderable {
         }
 
     }
-    public void determineWallText(){
-        switch (hitValue){
-            case 1:
-                wallColor = Color.darkGray;
-                wallTexture = Texture.t_tech_1c;
-                break;
-            case 2:
-                wallColor = Color.red;
-                wallTexture = Texture.t_bricks_R;
-                break;
-            case 3:
-                wallColor = Color.blue;
-                wallTexture = Texture.t_bricks_B;
-                break;
-            case 4:
-                wallColor = Color.GREEN;
-                wallTexture = Texture.t_crate_2c;
-                break;
-            case 22:
-                wallColor = Color.black;
-                wallTexture = Texture.t_door_1c;
-                break;
-            default:
-                wallColor = Color.white;
-                wallTexture = Texture.t_missing;
-                break;
-        }
+    public void determineWallText(Map map){
+        map.getTexture(hitValue);
         if (wallTexture==null){
             wallTexture = Texture.t_missing;
         }
