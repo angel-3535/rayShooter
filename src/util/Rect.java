@@ -23,4 +23,8 @@ public class Rect {
         this.y = y;
     }
 
+    public boolean isPointInside(int i, int j){
+        return (i<this.x+this.w && i>this.x) &&  (j<this.y+this.y && j>this.y);
+    }
+
 }
