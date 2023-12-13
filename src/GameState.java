@@ -8,7 +8,7 @@ public class GameState implements State {
 
     Player player;
     Map currentMap;
-    int currentMapIndex = 0;
+    public int currentMapIndex = 0;
     Map[] maps;
 
     public GameState(Map[] maps){
@@ -36,6 +36,14 @@ public class GameState implements State {
         }
 
         player.update(dt);
+    }
+
+    public void setMap(int index){
+        currentMapIndex = index;
+        currentMapIndex = RMath.clamp(currentMapIndex, 0, maps.length-1);
+        currentMap = maps[currentMapIndex];
+        player.map = currentMap;
+        player.nextState = false;
     }
 
     @Override

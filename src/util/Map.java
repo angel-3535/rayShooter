@@ -11,6 +11,7 @@ import java.io.ObjectInputStream;
 import static util.RMath.clamp;
 
 public class Map implements Renderable {
+    public static int debugIndex = 0;
     public int[][] layout;
     public int[][] floor;
     public int[][] ceiling;

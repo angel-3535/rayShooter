@@ -26,6 +26,7 @@ public class Window extends JFrame {
         this.setTitle("rayshooter");
         addKeyListener(KL.getKeyListener());
         addMouseListener(ML.getMouseListener());
+        addMouseMotionListener(ML.getMouseListener());
         volatileR = false;
         System.setProperty("sun.java2d.opengl", "true");
 

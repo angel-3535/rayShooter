@@ -70,7 +70,7 @@ public class ML implements MouseMotionListener, MouseListener {
         if (e.getButton() == MouseEvent.BUTTON1){
             isM1Down = false;
         }
-        mouseMoved(e);
+//        mouseMoved(e);
         e.consume();
 
     }

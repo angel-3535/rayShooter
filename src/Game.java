@@ -58,10 +58,15 @@ public class Game implements Runnable, Renderable {
             sceneCD = 1.f;
             switch (newState) {
                 case 0:
-                    currentScene = new GameState(maps);
+                    window.setSize(960,640);
+                    GameState g = new GameState(maps);
+                    g.setMap(Map.debugIndex);
+                    currentScene = g;
+
                     break;
                 case 1:
-                    currentScene = new EditorState(maps);
+                    window.setSize(960*2,1080);
+                    currentScene = new EditorState(maps, Map.debugIndex);
                     break;
                 default:
                     System.out.println("Unknown game state");

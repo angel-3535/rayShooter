@@ -145,10 +145,10 @@ public class Player extends Entity{
             Vector2D newPos = new Vector2D(this.transform.getX() + v.getX(), this.transform.getY() + v.getY());
 
 
-            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(newPos.getY())) == 2){
+            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(newPos.getY())) == 4){
                 map.setTileContent(map.getMapX(newPos.getX()), map.getMapY(newPos.getY()), 0);
             }
-            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(newPos.getY())) == 1){
+            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(newPos.getY())) == 3){
                 nextState = true;
                 transform.setPosition(new Vector2D(300,300));
             }
