@@ -21,6 +21,7 @@ public class Texture {
     public static Texture t_bricks_G;
     public static Texture t_crate_2c ;
     public static Texture t_door_1c ;
+    public static Texture t_exit ;
     public static Texture t_floor_1a ;
     public static Texture t_grass_1a ;
     public static Texture t_dirt_1a ;
@@ -84,6 +85,9 @@ public class Texture {
 
         t_door_1c = new Texture("src/assets/textures/DOOR_1C.PNG");
         textures[11] = t_door_1c;
+
+        t_exit = new Texture("src/assets/textures/EXIT.PNG");
+        textures[12] = t_exit;
 
         t_missing = new Texture("src/assets/textures/missing.png");
         textures[99] = t_missing;

@@ -30,29 +30,33 @@ public class Game implements Runnable, Renderable {
     boolean editor = false;
     float sceneCD = 0f;
     float buttonCD = 0f;
-    Map map = new Map();
+    Map[] maps = new Map[10];
 
     private State currentScene;
 
 
     public Game() throws IOException {
         window = Window.getWindow();
+        for (int i = 0; i < 10; i++){
+            String path = String.format("src/assets/levels/level%d.dat",i);
+            maps[i] = new Map(path);
+        }
+
 
 
         Texture.loadTextures();
 //        Sound.playMusic(Sound.M_HELL_ON_EARTH.getClip());
-        currentScene = new GameState(map);
+        currentScene = new GameState(maps);
     }
-
     public void changeState(int newState) {
         if (sceneCD <= 0.f) {
             sceneCD = 1.f;
             switch (newState) {
                 case 0:
-                    currentScene = new GameState(map);
+                    currentScene = new GameState(maps);
                     break;
                 case 1:
-                    currentScene = new EditorState(map);
+                    currentScene = new EditorState(maps);
                     break;
                 default:
                     System.out.println("Unknown game state");
@@ -63,8 +67,6 @@ public class Game implements Runnable, Renderable {
 
         }
     }
-
-
     public void inputs(){
         if (kl.isKeyDown(KeyEvent.VK_Y)){
             changeState(1);
@@ -78,8 +80,6 @@ public class Game implements Runnable, Renderable {
         sceneCD -= dt;
         buttonCD -=dt;
     }
-
-
     public void draw(Graphics g){
 
         currentScene.draw(g);
@@ -87,7 +87,6 @@ public class Game implements Runnable, Renderable {
         g.setColor(Color.green);
         g.drawString(displayInfo,30,90);
     }
-
     public void update(double dt){
         handleCD(dt);
         inputs();
@@ -99,7 +98,6 @@ public class Game implements Runnable, Renderable {
         displayInfo = String.format("%d FPS (%.4f)", frameRate,dt);
         window.render(this);
     }
-
     @Override
     public void run() {
         window.requestFocus();

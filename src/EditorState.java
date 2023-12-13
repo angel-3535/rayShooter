@@ -9,7 +9,8 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 
 public class EditorState implements State{
-    Map map;
+    Map[] maps;
+    int CurrentMapIndex = 0;
     int[][] currentMap;
     int currentSelection = 0;
     int texSelMaxCol = 5;
@@ -28,16 +29,17 @@ public class EditorState implements State{
 
     Rect[] r_mapTiles;
     Rect[] r_texSelect;
+//    Rect[]
 
 
 
-    public EditorState(Map map){
-        this.map = map;
-        this.currentMap = map.layout;
+    public EditorState(Map[] maps){
+        this.maps = maps;
+        this.currentMap = maps[CurrentMapIndex].layout;
         this.ml = ML.getMouseListener();
         this.kl = KL.getKeyListener();
 
-        r_mapTiles = new Rect[map.getMapSize() * map.getMapSize()];
+        r_mapTiles = new Rect[maps[CurrentMapIndex].getMapSize() * maps[CurrentMapIndex].getMapSize()];
 
         int x,y,xo,yo;
         for (y = 0; y < currentMap.length; y++){
@@ -45,7 +47,7 @@ public class EditorState implements State{
 
                 xo = x*16 + 100; yo = y*16 + 100;
 
-                r_mapTiles[y* map.getMapSize() + x] = new Rect(xo,yo,16,16);
+                r_mapTiles[y* maps[CurrentMapIndex].getMapSize() + x] = new Rect(xo,yo,16,16);
 
             }
         }
@@ -73,7 +75,7 @@ public class EditorState implements State{
 
                 if (currentMap[y][x]!=0){
                     g.drawImage(
-                            map.getTexture(currentMap[y][x]).img.getImage(),
+                            maps[CurrentMapIndex].getTexture(currentMap[y][x]).img.getImage(),
                             xo,
                             yo,
                             16,
@@ -85,7 +87,6 @@ public class EditorState implements State{
             }
         }
     }
-
     private void drawButtons(Graphics g) {
         g.setColor(c_layout);
         g.fillRect(r_layout.x, r_layout.y, r_layout.w, r_layout.h);
@@ -113,7 +114,6 @@ public class EditorState implements State{
         drawTextureSelection(g);
 
     }
-
     private void drawTextureSelection(Graphics g){
         int x,y,xo,yo;
         for (y = 0; y < texSelMaxCol; y++){
@@ -123,7 +123,7 @@ public class EditorState implements State{
 
 
                     g.drawImage(
-                            map.getTexture(y*5+x).img.getImage(),
+                            maps[CurrentMapIndex].getTexture(y*5+x).img.getImage(),
                             xo,
                             yo,
                             32,
@@ -136,18 +136,17 @@ public class EditorState implements State{
         }
         g.setColor(Color.black);
     }
-
     @Override
     public void update(double dt) {
 
         if (ml.isPressed(MouseEvent.BUTTON1) && ml.isMouseInsideRect(r_layout)){
-            currentMap = map.layout;
+            currentMap = maps[CurrentMapIndex].layout;
         }
         if (ml.isPressed(MouseEvent.BUTTON1) && ml.isMouseInsideRect(r_floor)){
-            currentMap = map.floor;
+            currentMap = maps[CurrentMapIndex].floor;
         }
         if (ml.isPressed(MouseEvent.BUTTON1) && ml.isMouseInsideRect(r_ceiling)){
-            currentMap = map.ceiling;
+            currentMap = maps[CurrentMapIndex].ceiling;
         }
 
         if (ml.isPressed(MouseEvent.BUTTON1)){
@@ -192,9 +191,10 @@ public class EditorState implements State{
         if (ml.isPressed(MouseEvent.BUTTON1)){
             if (ml.isMouseInsideRect(r_save)){
                 try {
-                    FileOutputStream fos = new FileOutputStream("test.dat");
+                    String save = String.format("src/assets/levels/Elevel%d.dat",CurrentMapIndex);
+                    FileOutputStream fos = new FileOutputStream(save);
                     ObjectOutputStream oos = new ObjectOutputStream(fos);
-                    oos.writeObject(map.mapA);
+                    oos.writeObject(maps[CurrentMapIndex].mapA);
 
                 } catch (Exception e) {
 
@@ -204,8 +204,6 @@ public class EditorState implements State{
         }
 
     }
-
-
     @Override
     public void draw(Graphics g) {
 

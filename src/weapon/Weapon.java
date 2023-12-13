@@ -23,6 +23,8 @@ public class Weapon {
     ArrayList<Projectile> liveProjectiles = new ArrayList<>();
     double lifeTime;
     Texture img;
+    Texture img1;
+    Texture img2;
 
     @Override
     public String toString() {
@@ -40,6 +42,8 @@ public class Weapon {
         this.lifeTime = lifeTime;
         try {
             this.img = new Texture("src/assets/weapons/handgun.png");
+            this.img1 = new Texture("src/assets/weapons/handgun1.png");
+            this.img2 = new Texture("src/assets/weapons/handgun2.png");
         }catch (Exception e){
 
         }
@@ -108,8 +112,10 @@ public class Weapon {
     public void draw(Graphics g) {
         g.drawImage(
                 img.img.getImage(),
-            Window.getWindow().getWidth()-img.img.getIconWidth(),
-            Window.getWindow().getHeight()-img.img.getIconHeight(),
+                Window.getWindow().getWidth()-img.img.getIconWidth() * 5,
+                Window.getWindow().getHeight()-img.img.getIconHeight() * 5,
+                img.img.getIconWidth() * 5,
+                img.img.getIconHeight() * 5,
                 null
         );
         for (Projectile p:liveProjectiles) {

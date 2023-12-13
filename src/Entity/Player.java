@@ -24,21 +24,58 @@ public class Player extends Entity{
     float reach;
 
     int maxRenderLineHeight ;
-    int totalRays = 150;
-    final float FOV = (float) Math.toRadians(65);
+    int totalRays = 120;
+    final float FOV = (float) Math.toRadians(60);
     final float rayStep = FOV/totalRays;
 
     public Map map;
     Hud hud = new Hud();
+
+    Vector2D spritePos = new Vector2D(2*64,2*64);
+    int spriteZ =  20;
+    int spriteX =  300;
+    int spriteY =  300;
     Weapon gun = new Weapon(this,40,0.3,1,Integer.MAX_VALUE,3.f);
+    public boolean nextState = false;
 
     public Player(float movementSpeed, Map map){
-        transform = new Transform(30,300,8,8);
+
+
+        transform = new Transform(2*64,2*64, 0,0);
         this.moveSpeed = movementSpeed;
         this.map = map;
         reach = (float) (map.getTileSize() * 1.5);
 
         maxRenderLineHeight = Window.getWindow().getHeight();
+
+
+    }
+
+    public void drawSprite(Graphics g){
+
+        float sx = spritePos.getX() - transform.getX();
+        float sy = spritePos.getY() - transform.getY();
+        float sz = spriteZ;
+
+        float CS = (float) cos(transform.getAngleRadians()), SN = (float) sin(transform.getAngleRadians());
+
+        float a = -sy*CS + sx * SN;
+        float b = -sx*CS - sy * SN;
+
+        sx = a;
+        sy = b;
+
+        sx = (float) ((sx * 108.0/sy) + 60);
+        sy = (float) ((sz * 108.0/sy) + 40);
+
+        g.setColor(Color.red);
+        g.drawImage(
+                Texture.t_crate_2c.img.getImage(),
+                (int) sx*8,
+                (int) sy * 8,
+                null
+        );
+
 
     }
     public void inputs(double dt){
@@ -111,8 +148,11 @@ public class Player extends Entity{
             Vector2D newPos = new Vector2D(this.transform.getX() + v.getX(), this.transform.getY() + v.getY());
 
 
-            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(newPos.getY())) == 22){
+            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(newPos.getY())) == 11){
                 map.setTileContent(map.getMapX(newPos.getX()), map.getMapY(newPos.getY()), 0);
+            }
+            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(newPos.getY())) == 12){
+                nextState = true;
             }
         }
 
@@ -124,11 +164,9 @@ public class Player extends Entity{
 //            moving = false;
         }
     }
-
     public void setMap(Map map){
         this.map = map;
     }
-
     public void castRays(Graphics g){
 
         int rayNumber=0;
@@ -265,14 +303,13 @@ public class Player extends Entity{
                 null
         );
     }
-
     public void draw(Graphics g){
 
         drawSky(g);
         castRays(g);
+//        drawSprite(g);
         gun.draw(g);
     }
-
     public void update(double dt){
         inputs(dt);
     }

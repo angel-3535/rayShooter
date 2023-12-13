@@ -25,10 +25,16 @@ public class Map implements Renderable {
 
     public Map(){
 
+        mapA = Rooms.room1;
+        layout = mapA[0];
+        floor = mapA[1];
+        ceiling = mapA[2];
+        TileSize = 64;
+    }
 
+    public Map(String path){
         try {
-
-            FileInputStream fis = new FileInputStream("test.dat");
+            FileInputStream fis = new FileInputStream(path);
             ObjectInputStream iis = new ObjectInputStream(fis);
             mapA = (int[][][]) iis.readObject();
         }catch (Exception e){
