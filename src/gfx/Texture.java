@@ -8,6 +8,10 @@ import java.awt.image.Raster;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 public class Texture {
     public Color[][] texColorArray;
@@ -16,6 +20,16 @@ public class Texture {
     public int h;
     public static Texture t_bricks;
     public static Texture t_missing;
+
+    static {
+        try {
+            t_missing = new Texture("src/assets/textures/0missing.png");
+        } catch (IOException e) {
+            System.out.println("Missing textures missing......funny");
+            e.printStackTrace();
+        }
+    }
+
     public static Texture t_bricks_R;
     public static Texture t_bricks_B;
     public static Texture t_bricks_G;
@@ -29,7 +43,7 @@ public class Texture {
     public static Texture t_tech_1c ;
     public static Texture t_sky ;
 
-    public static Texture[] textures = new Texture[100];
+    public static Texture[] textures = new Texture[1000] ;
 
 
     public Texture(String path) throws IOException {
@@ -51,6 +65,57 @@ public class Texture {
 
     }
 
+    public Texture(File file) throws IOException {
+        System.out.println("Loading..." + file);
+        BufferedImage img =  ImageIO.read(file);
+        w = img.getWidth();
+        h = img.getHeight();
+        texColorArray = new Color[h][w];
+
+        for (int y = 0; y < h; y++){
+            for (int x = 0; x < w; x++){
+                texColorArray[y][x] = new Color(img.getRGB(x,y));
+            }
+        }
+        this.img = new ImageIcon(img);
+        System.out.println("testing: " + file);
+        Color textureColor = texColorArray[0][0];
+        System.out.println("test pass");
+
+    }
+
+    //LOAD ALL TEXTURE FILES
+    public static void loadAllTextures(){
+//        try {
+//            textures[1] = new Texture("src/assets/textures/2DOOR_1C.PNG");
+//
+//            textures[2] = new Texture("src/assets/textures/1EXIT.PNG");
+//        }catch (Exception e){
+//
+//        }
+
+        int current = 1;
+        File folder = new File("src/assets/textures");
+        File[] listOfFiles = folder.listFiles();
+
+        for (File file : listOfFiles){
+            try {
+                textures[current] = new Texture(file);
+                current++;
+            }catch (Exception e){
+                textures[current] = t_missing;
+                current++;
+            }
+        }
+
+        try{
+
+            t_sky = new Texture("src/assets/sky/skyBox2.png");
+        }catch (Exception e){
+
+        }
+
+    }
     public static void loadTextures() throws IOException {
 
         t_bricks = new Texture("src/assets/textures/bricks.png");
@@ -83,13 +148,12 @@ public class Texture {
         t_tech_1c = new Texture("src/assets/textures/TECH_1C.PNG");
         textures[10] = t_tech_1c;
 
-        t_door_1c = new Texture("src/assets/textures/DOOR_1C.PNG");
+        t_door_1c = new Texture("src/assets/textures/2DOOR_1C.PNG");
         textures[11] = t_door_1c;
 
-        t_exit = new Texture("src/assets/textures/EXIT.PNG");
+        t_exit = new Texture("src/assets/textures/1EXIT.PNG");
         textures[12] = t_exit;
 
-        t_missing = new Texture("src/assets/textures/missing.png");
         textures[99] = t_missing;
 
 

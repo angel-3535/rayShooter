@@ -5,17 +5,18 @@ import util.Rect;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-public class ML extends MouseAdapter implements MouseMotionListener {
+public class ML implements MouseMotionListener, MouseListener {
 
 
     private static ML mouseListener = new ML();
     private Dictionary<Integer,Boolean> buttonPressedDictionary = new Hashtable<>();
 
-    private boolean mouseDragging = false;
+    public boolean isM1Down = false;
 
 
     private double x = 0.0, y = 0.0;
@@ -34,6 +35,13 @@ public class ML extends MouseAdapter implements MouseMotionListener {
     }
 
 
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON1){
+            isM1Down = false;
+        }
+    }
+
     /**
      * <p>
      *sets the entry of the MouseEvent in the dictionary to true when the button is pressed
@@ -44,6 +52,10 @@ public class ML extends MouseAdapter implements MouseMotionListener {
         x = e.getX();
         y = e.getY();
         buttonPressedDictionary.put(e.getButton(),true);
+        if (e.getButton() == MouseEvent.BUTTON1){
+            isM1Down = true;
+        }
+        e.consume();
 
     }
 
@@ -55,8 +67,21 @@ public class ML extends MouseAdapter implements MouseMotionListener {
     @Override
     public void mouseReleased(MouseEvent e){
         buttonPressedDictionary.put(e.getButton(),false);
-        mouseDragging = false;
+        if (e.getButton() == MouseEvent.BUTTON1){
+            isM1Down = false;
+        }
         mouseMoved(e);
+        e.consume();
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
 
     }
 
@@ -69,6 +94,7 @@ public class ML extends MouseAdapter implements MouseMotionListener {
     public void mouseMoved(MouseEvent e){
         x = e.getX();
         y = e.getY();
+        e.consume();
     }
 
     /**
@@ -78,8 +104,10 @@ public class ML extends MouseAdapter implements MouseMotionListener {
      */
     @Override
     public void mouseDragged(MouseEvent e){
-        x = e.getX();
-        y = e.getY();
+        System.out.println("mouseDragged");
+        x = e.getPoint().getX();
+        y = e.getPoint().getY();
+        e.consume();
     }
 
     /**
@@ -89,6 +117,7 @@ public class ML extends MouseAdapter implements MouseMotionListener {
      * @return Boolean
      */
     public boolean isMouseInsideRect(Rect rect){
+
 
 
         boolean  leftEdge  = this.x >= rect.x;
@@ -106,8 +135,7 @@ public class ML extends MouseAdapter implements MouseMotionListener {
      * </p>
      * @return Boolean
      */
-    public boolean isMouseInsideRect(double x, double y, double w, double h){
-
+    public boolean isMouseInsideRect(double x, double y, double w, double h)    {
 
         boolean  leftEdge  = mouseListener.x >= x;
         boolean  RightEdge = mouseListener.x <= x + w;
@@ -115,26 +143,6 @@ public class ML extends MouseAdapter implements MouseMotionListener {
         boolean  LowerEdge = mouseListener.y <= y + h;
 
         return (leftEdge && RightEdge && UpperEdge &&  LowerEdge );
-    }
-
-    /**
-     * <p>
-     *  Returns the x position of the mouse
-     * </p>
-     * @return double
-     */
-    public double getX() {
-        return x;
-    }
-
-    /**
-     * <p>
-     *  Returns the y position of the mouse
-     * </p>
-     * @return double
-     */
-    public double getY() {
-        return y;
     }
 
 
@@ -153,16 +161,10 @@ public class ML extends MouseAdapter implements MouseMotionListener {
 
         try{
             return buttonPressedDictionary.get(buttonCode);
+
         }catch (Exception e){
             return  false;
         }
     }
 
-    /**
-     * <p>
-     *  Returns a the value of the variable mouseDragging.
-     * </p>
-     * @return boolean
-     */
-    public boolean isMouseDragging(){return mouseDragging;}
 }

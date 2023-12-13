@@ -11,6 +11,10 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 import static java.lang.Math.*;
 
@@ -38,15 +42,16 @@ public class Game implements Runnable, Renderable {
     public Game() throws IOException {
         window = Window.getWindow();
         for (int i = 0; i < 10; i++){
-            String path = String.format("src/assets/levels/level%d.dat",i);
+            String path = String.format("src/assets/levels/Elevel%d.dat",i);
             maps[i] = new Map(path);
         }
 
-
-
-        Texture.loadTextures();
+//        Texture.loadTextures();
 //        Sound.playMusic(Sound.M_HELL_ON_EARTH.getClip());
+        Texture.loadAllTextures();
         currentScene = new GameState(maps);
+
+
     }
     public void changeState(int newState) {
         if (sceneCD <= 0.f) {

@@ -3,10 +3,7 @@ package Entity;
 import gfx.Hud;
 import gfx.Texture;
 import gfx.Window;
-import util.Map;
-import util.Ray;
-import util.Transform;
-import util.Vector2D;
+import util.*;
 import util.io.KL;
 import weapon.Weapon;
 
@@ -24,14 +21,14 @@ public class Player extends Entity{
     float reach;
 
     int maxRenderLineHeight ;
-    int totalRays = 120;
+    int totalRays = 260;
     final float FOV = (float) Math.toRadians(60);
-    final float rayStep = FOV/totalRays;
+    float rayStep = FOV/totalRays;
 
     public Map map;
     Hud hud = new Hud();
 
-    Vector2D spritePos = new Vector2D(2*64,2*64);
+    Vector2D spritePos = new Vector2D(300,300);
     int spriteZ =  20;
     int spriteX =  300;
     int spriteY =  300;
@@ -148,21 +145,48 @@ public class Player extends Entity{
             Vector2D newPos = new Vector2D(this.transform.getX() + v.getX(), this.transform.getY() + v.getY());
 
 
-            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(newPos.getY())) == 11){
+            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(newPos.getY())) == 2){
                 map.setTileContent(map.getMapX(newPos.getX()), map.getMapY(newPos.getY()), 0);
             }
-            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(newPos.getY())) == 12){
+            if (map.getTileContent(map.getMapX(newPos.getX()), map.getMapY(newPos.getY())) == 1){
                 nextState = true;
+                transform.setPosition(new Vector2D(300,300));
             }
         }
 
+        if (kl.isKeyDown(KeyEvent.VK_1)){
+            totalRays = 60;
+            rayStep = FOV/totalRays;
+        }
 
-        if (kl.isKeyDown(KeyEvent.VK_W) || kl.isKeyDown(KeyEvent.VK_S)){
-//            moving = true;
+        if (kl.isKeyDown(KeyEvent.VK_2)){
+            totalRays = 120;
+            rayStep = FOV/totalRays;
+
         }
-        else{
-//            moving = false;
+
+        if (kl.isKeyDown(KeyEvent.VK_3)){
+            totalRays = 240;
+            rayStep = FOV/totalRays;
+
         }
+        if (kl.isKeyDown(KeyEvent.VK_0)){
+            totalRays = 30;
+            rayStep = FOV/totalRays;
+
+        }
+        if (kl.isKeyDown(KeyEvent.VK_P)){
+            totalRays = (int) (totalRays + 10 * dt)+2;
+            totalRays = RMath.clamp(totalRays,10,Window.getWindow().getWidth());
+            rayStep = FOV/totalRays;
+        }
+        if (kl.isKeyDown(KeyEvent.VK_O)){
+            totalRays -= 10 * dt;
+            totalRays = RMath.clamp(totalRays,10,960);
+            rayStep = FOV/totalRays;
+
+        }
+
     }
     public void setMap(Map map){
         this.map = map;
@@ -270,6 +294,31 @@ public class Player extends Entity{
                     }
 
                 }catch (Exception e){
+
+                    try {
+
+                        Texture texture = Texture.t_dirt_1a;
+
+
+                        //INSANE BIT FUCKERY (USE BITWISE AND TO ONLY GET THE VALUE OF THE FIRST 32 NUMBERS)
+                        Color t_pixelColor = texture.texColorArray[(int) (textureY)&63 ][(int) (textureX )&63];
+
+                        g.setColor(t_pixelColor);
+                        g.fillRect((int) (lineWidth * rayNumber ), y, (int) lineWidth,1);
+
+                        //Draw Ceiling
+                        if ((map.ceiling[(int) (textureY/64)][(int) (textureX/64f)] != 0)){
+                            texture = map.getTexture((map.ceiling[(int) (textureY/64)][(int) (textureX/64f)]));
+                            t_pixelColor = texture.texColorArray[(int) (textureY)&31 ][(int) (textureX )&31];
+
+                            g.setColor(t_pixelColor);
+
+                            g.fillRect((int) (lineWidth * rayNumber ), 640 - y, (int) lineWidth,1);
+                        }
+
+                    }catch (Exception ex){
+
+                    }
 //
                 }
 
@@ -284,8 +333,11 @@ public class Player extends Entity{
         }
     }
     public void drawSky(Graphics g){
-        int imgO = (int) (Window.getWindow().getWidth()/360f)+1;
-        int xo = (int) transform.getAngleDegrees() * imgO;
+        g.setColor(Color.GRAY);
+        g.fillRect(0,0,Window.getWindow().getWidth(),Window.getWindow().getHeight());
+        float ptw = transform.getAngleDegrees()!= 0? (transform.getAngleDegrees()/360f): 0;
+
+        int xo =  (int) (ptw * Window.getWindow().getWidth()/2);
         g.drawImage(
                 Texture.t_sky.img.getImage(),
                 xo - Window.getWindow().getWidth(),
@@ -302,6 +354,7 @@ public class Player extends Entity{
                 Window.getWindow().getHeight()/2,
                 null
         );
+
     }
     public void draw(Graphics g){
 
@@ -309,6 +362,12 @@ public class Player extends Entity{
         castRays(g);
 //        drawSprite(g);
         gun.draw(g);
+
+//        String str = String.format("Total rays: %d || Ray step: %.4f", totalRays,rayStep);
+//        g.setColor(Color.BLACK);
+//        Font myFont = new Font ("Courier New", 1, 17);
+//        g.setFont(myFont);
+//        g.drawString(str,Window.getWindow().getWidth()/2,Window.getWindow().getHeight()/2);
     }
     public void update(double dt){
         inputs(dt);
