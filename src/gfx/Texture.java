@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class Texture {
@@ -96,7 +97,7 @@ public class Texture {
 
         int current = 1;
         File folder = new File("src/assets/textures");
-        File[] listOfFiles = folder.listFiles();
+        File[] listOfFiles = folder.listFiles()  ;
 
         for (File file : listOfFiles){
             try {
