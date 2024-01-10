@@ -15,7 +15,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![RayShooter][Screenshot]](images/ss.png)
+
+![raycaster1](./images/raycaster1.png?raw=true "Raycaster screenshot")
+![RayShooter](./images/ss.png?raw=true "Raycaster screenshot")
 
 A simple project for a game development class built in 2 weeks.
 
